@@ -194,7 +194,7 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
    - **DESIGN.md + `design/tokens.*`** committed BEFORE first component. Produce via `/impeccable init` (creates PRODUCT.md + DESIGN.md), refine with `ui-ux-pro-max` for palette/fonts once. Stock-palette reject (unmodified defaults).
    - **DESIGN.md line 1 (MANDATORY):** `DIALS: variance=N motion=N density=N` (1-10. Operator tools: 4/3/8. Marketing: 8/6/4). Managers tune output to the dials. No dials = reject.
    - **REFS (MANDATORY):** DESIGN.md links 2+ reference screenshots in `design/refs/` or named products with URLs. Direction without references = incomplete (Rule 27). Genre refs in `<YOUR_STACK_DIR>/design-refs/`.
-   - **TASTE profile (MANDATORY):** DESIGN.md line 2: `TASTE: <profile>` (apple/netflix/shopify/replit/linear/chatgpt/claude/vercel/stripe/notion/github — or combine). Score UI against that profile's 10 dimensions (0-10 each, pass ≥80/100). Full profiles: `docs/taste-profiles.md`.
+   - **TASTE profile (MANDATORY):** DESIGN.md line 2: `TASTE: <profile>` (apple/netflix/shopify/replit/linear/chatgpt/claude/vercel/stripe/notion/github — or combine). Score UI against that profile's 10 dimensions (0-10 each, pass ≥80/100). Full profiles: `fleet/taste-profiles.md`.
    - **Reference screenshot as FIRST INPUT** to every frontend manager — not text describing what good looks like, the actual image (Read tool on the path). Managers diff against it, not imagine.
    - **Impeccable hook (structural enforcement):** fires on every UI file edit — cannot be forgotten or compressed. Catches mechanical slop (default palettes, spacing chaos, generic type). Missing hook = frontend work blocked. Run `npx impeccable install` if absent.
    - **Screenshot loop DURING build:** every 3 commits touching UI files, take Chrome extension screenshot + compare to reference. Self-correct mid-build, not at end-gate. `/impeccable audit` before reporting done — unresolved findings = rejected.
@@ -206,13 +206,13 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
 29. **Living `ARCHITECTURE.md` per repo.** Updated every wave reset.
 30. **MVP = local-first, fully styled.** Mock data first (`USE_MOCK=true`), swappable to real API. Fewer features, never less design.
 31. **UI Quality Standard (anti-slop rule).** A LOT of UI ships visually horrible. This is the #1 quality problem. The bar: Linear's restraint, Vercel's typography, Bloomberg's density. Apex dashboard = in-house reference. **Every frontend change MUST be visually verified via Chrome extension before reporting done — no exceptions.** A screenshot without a written SEE description and 30-G score is NOT verification — it is decoration. Untaken and unjudged are the same failure.
-   - **30-A · Visualization by default.** See table in `docs/taste-profiles.md`. On any dashboard: ≥50% of numeric values carry visual encoding beyond digits. Chart-lib defaults = reject — restyle to tokens. Invoke `dataviz` skill before every chart.
+   - **30-A · Visualization by default.** See table in `fleet/taste-profiles.md`. On any dashboard: ≥50% of numeric values carry visual encoding beyond digits. Chart-lib defaults = reject — restyle to tokens. Invoke `dataviz` skill before every chart.
    - **30-B · Density floor.** ≥15 data points above fold at 1440px. Body 13-14px. Card padding ≤20px. No in-app heroes. >25% empty viewport = justify or fill.
    - **30-C · Cohesion.** ONE of each pattern per app: card, table, page-header, status-indicator, empty-state, loading-skeleton. New pattern = `DESIGN.md` update same commit.
    - **30-D · Designed states.** Loading = skeleton in final layout shape. Empty = explains what will appear. Error = inline, styled, actionable.
    - **30-E · Dark-first.** Layered dark ramp, desaturated accents, elevation by lightness. Max one gradient per view. Micro-interactions 150-250ms. Light mode only if audience demands.
    - **30-F · Slop check (Fable/Jarvis gate — NOT self-graded).** Fable-supervisor or Jarvis answers at dismissal gate, not the manager. Manager runs `/impeccable audit` and pastes findings instead. Questions: (1) template-looking? (2) icon doing viz job? (3) grayscale hierarchy? (4) two pages = different apps? (5) >25% empty?
-   - **30-G · Visual gate rubric.** See `docs/taste-profiles.md` for full scoring. 6 dimensions × 0-2, pass ≥10/12 no zeroes. Screenshots 1440×900 + 375×812. "Screenshots attached" without scores = gate not run.
+   - **30-G · Visual gate rubric.** See `fleet/taste-profiles.md` for full scoring. 6 dimensions × 0-2, pass ≥10/12 no zeroes. Screenshots 1440×900 + 375×812. "Screenshots attached" without scores = gate not run.
    - **30-H · Screenshot Verdict Block (MANDATORY).** A screenshot is a test result, not a deliverable. Every frontend report claiming done MUST contain, for EACH screenshot:
      ```
      SCREENSHOT: <path> (<viewport>)
