@@ -213,7 +213,13 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
    - **30-C · Cohesion.** ONE of each pattern per app: card, table, page-header, status-indicator, empty-state, loading-skeleton. New pattern = `DESIGN.md` update same commit.
    - **30-D · Designed states.** Loading = skeleton in final layout shape. Empty = explains what will appear. Error = inline, styled, actionable.
    - **30-E · Dark-first.** Layered dark ramp, desaturated accents, elevation by lightness. Max one gradient per view. Micro-interactions 150-250ms. Light mode only if audience demands.
-   - **30-F · Slop check (Fable/Jarvis gate — NOT self-graded).** Fable-supervisor or Jarvis answers at dismissal gate, not the manager. Manager runs `/impeccable audit` and pastes findings instead. Questions: (1) template-looking? (2) icon doing viz job? (3) grayscale hierarchy? (4) two pages = different apps? (5) >25% empty?
+   - **30-F · Slop check (Jarvis + council gate — NOT the frontend manager).** The frontend manager NEVER scores its own taste. At dismissal:
+     - **Jarvis:** Chrome extension → visits live page → scores rubric independently
+     - **Fable (council):** Chrome extension → visits live page → scores independently
+     - **Codex:** code audit + can use headless Chrome for frontend review
+     - **Gemini:** code audit (no browser tooling yet)
+     - **Grok:** code audit only (no eyes yet)
+     - Manager runs `/impeccable audit` and pastes findings — that's their only self-report. Taste judgment comes from Jarvis + council, never self.
    - **30-G · Visual gate rubric.** See `fleet/taste-profiles.md` for full scoring. 6 dimensions × 0-2, pass ≥10/12 no zeroes. Screenshots 1440×900 + 375×812. "Screenshots attached" without scores = gate not run.
    - **30-H · Screenshot Verdict Block (MANDATORY).** A screenshot is a test result, not a deliverable. Every frontend report claiming done MUST contain, for EACH screenshot:
      ```
