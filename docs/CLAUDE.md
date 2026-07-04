@@ -220,6 +220,7 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
      - **Gemini:** code audit (no browser tooling yet)
      - **Grok:** code audit only (no eyes yet)
      - Manager runs `/impeccable audit` and pastes findings — that's their only self-report. Taste judgment comes from Jarvis + council, never self.
+   - **No self-grading EVER** — across the entire system. Managers don't grade their own work. Council members don't grade their own proposals. The only "self-check" allowed is crossing t's and dotting i's before SUBMITTING to the grader (like proofreading before handing to a teacher). The GRADE comes from someone else. Always.
    - **30-G · Visual gate rubric.** See `fleet/taste-profiles.md` for full scoring. 6 dimensions × 0-2, pass ≥10/12 no zeroes. Screenshots 1440×900 + 375×812. "Screenshots attached" without scores = gate not run.
    - **30-H · Screenshot Verdict Block (MANDATORY).** A screenshot is a test result, not a deliverable. Every frontend report claiming done MUST contain, for EACH screenshot:
      ```
