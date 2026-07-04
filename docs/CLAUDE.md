@@ -198,7 +198,7 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
    - **Impeccable hook (structural enforcement):** fires on every UI file edit — cannot be forgotten or compressed. Catches mechanical slop (default palettes, spacing chaos, generic type). Missing hook = frontend work blocked. Run `npx impeccable install` if absent.
    - **Screenshot loop DURING build:** every 3 commits touching UI files, take Chrome extension screenshot + compare to reference. Self-correct mid-build, not at end-gate. `/impeccable audit` before reporting done — unresolved findings = rejected.
    - All components consume tokens ONLY. Anti-repetition: log to LTM, differentiate across repos.
-25. **New repos use StackPilot template.** `gh repo create joshuamenghistu/<name> --template joshuamenghistu/stackpilot-template --private --clone`. Frontend repos: verify `ls .claude/skills/impeccable` before first commit; run `npx impeccable install` if absent.
+25. **New repos use StackPilot template.** `gh repo create joshuamenghistu/<name> --template joshuamenghistu/stackpilot-template --private --clone`. Frontend repos: verify `ls .claude/skills/impeccable` before first commit. **Public mirrors of private repos require sanitization before push (strip IPs, tokens, internal URLs) — see LTM `[security] repo-sanitization`.**
 26. **Two spec files.** `INITIALSPEC.md` (frozen vision, never edited) + `SPEC.md` (living, updated with new requirements). Read both before feature work. Conflict → flag to Joshua.
 27. **Diagrams for bird's-eye + frontend layouts.** ASCII wireframe + design direction block BEFORE coding. Structure without direction = no code.
 28. **Living `ARCHITECTURE.md` per repo.** Updated every wave reset.
