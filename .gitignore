@@ -1,0 +1,9 @@
+.env
+.env.*
+*.log
+node_modules/
+.DS_Store
+.claude/
+.codex/
+*.pyc
+__pycache__/
