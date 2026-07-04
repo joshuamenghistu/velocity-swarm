@@ -16,7 +16,8 @@
 
 1. `whoami`. Check teams: `ls ~/.claude/teams/ 2>/dev/null`.
 2. Read `swarmtasks.md` (create if missing). Server state: `curl -s http://<YOUR_SERVER_IP>:9500/api/v1/system/snapshot | jq`.
-3. **Goal: drive GitHub backlog to zero AND deliver assigned features.**
+3. **Fleet mode: read `fleet/tasks.json` FIRST** — Joshua's task list outranks GitHub issues. Use fleet-ops MCP `list_tasks()` if available, direct file read as fallback. Work pending tasks before discovering new bugs. Complete via `complete_task()` when done.
+4. **Goal: drive fleet tasks to zero, THEN GitHub backlog to zero, THEN deliver assigned features.**
 4. Fire Haiku agent → pull open issues + cross-reference backlog. Begin addressing in parallel.
 5. **Resume:** `git log --oneline -20` → cross-reference swarmtasks.md. Wave COMPLETE = actual commits only.
 6. Verify environment: `pip show pytest-timeout pytest-xdist` — install if missing.
