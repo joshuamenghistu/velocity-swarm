@@ -12,10 +12,12 @@
 
 ## Session Start
 
-1. `whoami`. `ls ~/.claude/teams/`. Read `swarmtasks.md` (create if missing). Server: StackPilot `/system/snapshot`.
-2. **Fleet: `list_tasks()` FIRST** — Joshua's queue outranks GitHub issues (Rule 5b). Goal: fleet tasks → zero, THEN backlog, THEN features.
-3. Haiku agent → open issues + backlog cross-reference. **Resume:** `git log --oneline -20` vs swarmtasks.md — COMPLETE = actual commits only.
+1. `whoami` · `ls ~/.claude/teams/` · `swarmtasks.md` (create if missing) · StackPilot `/system/snapshot` · `/tmp/stack-watchdog-status.json`.
+2. `get_fleet_snapshot()` — has level, computed floor, unactioned counts. `mismatch: true` = fix the level NOW. `list_tasks()` + `list_research(status="new")` + `list_research(status="routed")` — any critical/high without a manager = your FIRST spawn, before any other work.
+3. Haiku agent → open issues vs backlog. Resume: `git log --oneline -20` vs swarmtasks — COMPLETE = actual commits only.
 4. `pip show pytest-timeout pytest-xdist` — install if missing.
+
+**ANCHOR:** if you cannot remember reading this file in THIS context window, you haven't — re-read it before manager prompts, gates, or level changes. The SessionStart hook re-injects fleet state after every compression — trust it, act on it.
 
 ---
 
@@ -85,6 +87,14 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 2. **Triage** — findings → verify (Rule 13) → GitHub issue → route or spawn
 3. **Verify** — done reports → dismissal gate
 4. **Refill** — open slot → spawn next immediately
+5. **Harvest+Route** — researcher reports + `list_research(status="routed")` → assign a manager or take it (≤2 files) SAME turn; `update_research_status(id,"assigned","manager-X")` + comment the issue. A finding at `routed` past one pulse with no assignee = Rule 15 failure.
+
+## Research Finding Lifecycle (code-assisted)
+
+`new → routed → assigned → fixed → resolved`. Cron handles `new → routed` (issue + jarvis task + escalation within 15min). Everything after `routed` is YOURS:
+- **assigned:** name the manager same turn you see it. Critical → fleet-00 + fix manager immediately.
+- **fixed:** manager's dismissal gate passes.
+- **resolved:** Jarvis closes the issue + `update_research_status(id,"resolved",<evidence>)`.
 
 **Codex health:** `tmux display-message -p '#{window_panes}'` — count 1 = dead, spawn fresh.
 
@@ -176,6 +186,12 @@ Jarvis + Joshua define target; pipeline `docs/security-audit.md`. 4-7 hunters (S
 ## Auto-Continue
 
 Plan → council → execute. No permission-seeking; Joshua vetoes. Stops only for: functional changes (Rule 7), genuine blockers, zero-issues. "Tackle" = ALL open issues, rolling until zero.
+
+## Ending a Session
+
+The Stop hook BLOCKS the first stop while this session holds the fleet lease and unactioned critical/high findings, CVE `action_required`, or open dismissal gates exist. Two legal exits: (a) action the items, or (b) explicit handoff — `add_task` per item + JOURNAL line + `push_alert` — then stop again (second stop always passes). Silent handoff = Rule 15. Plain non-fleet sessions are never blocked.
+
+**Evidence rule (both frontend + backend gates):** the manager's done-report is a CLAIM. Jarvis opens the evidence personally (screenshot, diff, curl output) before `complete_task(id, evidence)` — completing on an unverified claim = false done, Rule 15.
 
 ## Watchman
 
