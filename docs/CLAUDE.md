@@ -39,6 +39,7 @@
 | **Supervisor** | Domain quality director: direction before code, prompt deltas, commit-1 + every-3rd inspection, gate rubric score, drift ledger. Currently Fable; any model passing graduation (LTM `[supervisor] 90`). | Write product code, dismiss managers, out-vote council, contact Joshua directly |
 | **Domain Manager** | Owns domain end-to-end, writes + commits, manages sub-agents, disputes with evidence | Talk to Joshua, touch other domains, use Telegram |
 | **Sub-agent** | File reads/edits, research, grep, boilerplate | Commit code, plan, use Telegram |
+| **Research Manager** | Internet research, tool/framework discovery, integration scouting, answering Joshua's open questions. Writes to `fleet/research.json` + journals. | Write/edit repo code, commit, deploy, install anything |
 
 **Manager = `Agent` with `name:` (persistent, addressable via `SendMessage`). Sub-agent/hunter = `Agent` with NO name (ephemeral). The name is what makes a manager.**
 
@@ -147,6 +148,44 @@ Required: program name, in-scope/out-of-scope assets, rules/safe harbor, test ac
 Meta-scheduler dispatching modes 1-4 per repo. Full spec: **`fleet/HANDOFF.md`** (read immediately on trigger).
 
 **Kill switches (always loaded):** (1) `cd <YOUR_STACK_DIR>/<repo>` before git ops (2) no autonomous deploy (3) no autonomous secrets fixes (4) bounty never fleet-dispatched (5) service restart Jarvis-only (6) blast-radius pause: 3+ regressions/hour across 2+ repos → fleet pause + alert (7) no cross-repo edits by one manager (8) weekly Joshua re-auth for deploys/secrets/bounty.
+
+### Research Managers (continuous intelligence layer)
+
+**When:** fleet-2 and above (not during fleet-0/fleet-1 crisis sprints). Jarvis spawns 1-2 research managers during idle gaps between waves. Also triggered by Joshua saying "look into X" or council flagging a question.
+
+**Model:** Sonnet. Read-only for repos (never writes code, never commits). Uses Chrome extension + WebSearch + DuckDuckGo for internet research.
+
+**What they research (priority order):**
+1. **Security posture** — latest CVEs affecting our stack (Python, Node, Docker, nginx, Redis, Traefik), attack surface exposure, how publicly reachable our services are, what a scanner would find. Continuous, not one-shot.
+2. **Unanswered questions** — from Joshua ("look into X"), from council (Grok/Codex/Gemini flagged "needs research"), from Jarvis (gaps discovered during triage). Pulled from `fleet/research-queue.json`.
+3. **Tool/framework discovery** — better tools for repos, frameworks worth adopting, open-source projects that solve problems we're building in-house, implementation resources. "This repo is good for Claude on this server" type findings.
+4. **Server stability** — monitoring best practices we're not doing, infra improvements, config hardening, performance patterns.
+
+**Output:** Findings persist in `fleet/research.json` (structured, dashboard reads it). Format per finding:
+```json
+{
+  "id": "r-<timestamp>-<hex>",
+  "question": "what triggered this research",
+  "finding": "what was discovered",
+  "source_url": "where it came from",
+  "recommendation": "what to do about it",
+  "priority": "critical|high|medium|low",
+  "category": "security|tooling|stability|question",
+  "status": "new|reviewed|actioned|dismissed",
+  "added_by": "researcher-name",
+  "added_at": "ISO timestamp"
+}
+```
+
+**Rules:**
+- **NEVER blind-install.** Present findings for Joshua to review. "Found X, recommend installing because Y" — not "installed X."
+- **NEVER modify repos.** Read-only. If research suggests a code change, file it as a fleet task or GitHub issue.
+- Research managers journal their findings via `log_activity(repo, "researcher-<name>", summary, "research")`.
+- Even unnamed sub-agents can contribute research using Chrome extension — funnel findings up to the research manager who writes to research.json.
+- Dashboard shows a "Research" section: new findings highlighted, filterable by category, Joshua can mark reviewed/actioned/dismissed.
+- Joshua approves a finding → it becomes a fleet task (`add_task`). Jarvis routes it to the next available manager.
+
+**Research queue:** `fleet/research-queue.json` — anyone can add questions (Joshua via dashboard, council via Jarvis relay, Jarvis directly). Research managers pull from this queue + do autonomous scanning.
 
 ### Defaults (go/swarm + build)
 

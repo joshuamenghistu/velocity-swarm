@@ -50,6 +50,24 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 ---
 
+## Auto Fleet Level (infer from Joshua's behavior — never make him say "fleet N")
+
+Fleet presets scale cron frequency. Jarvis adjusts automatically based on what Joshua is doing. Announce the change in one line ("→ fleet-1, following up on Apex setup") — don't ask.
+
+| Preset | Cron | Triggers (Jarvis infers) |
+|--------|------|--------------------------|
+| **fleet-0** | 30min | Joshua calls out multiple issues in active repos, or says "back to back" / rapid multi-repo directives. Crisis/sprint mode. |
+| **fleet-1** | 1h | Joshua gives 1 repo to work on, or says "set this up", or hands over a repo to debug. Active focused work. |
+| **fleet-2** | 2h | Normal baseline. Cooling off from fleet-0. Or Jarvis finds an issue during fleet-3/4 → auto-escalate to fleet-2 to follow up. |
+| **fleet-3** | 3h | ONLY when Joshua explicitly says "fleet 3", "goodnight", mentions rate limits, or tells Jarvis to cool off. Never auto-set. |
+| **fleet-4** | 4h | ONLY when Joshua explicitly says "fleet 4". Minimal pulse. Never auto-set. |
+
+**Anti-oscillation:** Don't bounce between levels on every message. Set the level when the PATTERN is clear (2+ signals in same direction), not on a single message. Hold for at least 1 cron cycle before changing again. Exception: Joshua explicitly says a level — apply immediately.
+
+**Escalation > de-escalation.** When in doubt, go UP (more frequent), not down. Missing an issue because the cron was too slow is worse than an extra pulse.
+
+---
+
 ## Continuous Loop (never idle while managers work)
 
 **ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
@@ -70,6 +88,31 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 4. **Refill** — open slot → spawn next immediately
 
 **Codex health check:** `tmux display-message -t "${MY_SESSION}:${MY_WINDOW}" -p '#{window_panes}'` — count 1 = dead, spawn fresh.
+
+**RESEARCH MANAGERS (fleet-2+ idle work):**
+Spawn when: all domain managers are grinding and Jarvis has idle capacity, OR Joshua says "look into X", OR council flags a question. Fleet-2 and above only — fleet-0/1 is sprint mode, no research.
+
+Spawn: `Agent(name: "researcher-<topic>", model: "sonnet", prompt: <research prompt>)`. Read-only for repos. Chrome extension + WebSearch + DuckDuckGo for internet research. Never writes code, never commits.
+
+**Research prompt template:**
+```
+You are a research manager. Your job is to find answers, not write code.
+Topic: <what to research>
+Tools: Chrome extension (mcp__claude-in-chrome__*), WebSearch, DuckDuckGo, Read (repos read-only).
+Output: Write findings to <YOUR_STACK_DIR>/fleet/research.json using this JSON format:
+{"id":"r-<timestamp>","question":"...","finding":"...","source_url":"...","recommendation":"...","priority":"critical|high|medium|low","category":"security|tooling|stability|question","status":"new","added_by":"researcher-<topic>","added_at":"ISO"}
+Append to the "findings" array (read file first, parse, append, write back).
+Also call log_activity via fleet-ops MCP or append to fleet/JOURNAL.md.
+NEVER install anything. NEVER modify repo code. Present findings — Joshua decides.
+```
+
+**Research sources (priority order):**
+1. `fleet/research-queue.json` — pull unanswered questions (Joshua, council, Jarvis)
+2. Security scanning — CVEs for our stack versions, attack surface, exposure audit
+3. Tool/framework discovery — better solutions for problems we're solving in-house
+4. Stability improvements — monitoring gaps, infra hardening, config best practices
+
+**Lifecycle:** Research managers report findings via SendMessage to Jarvis. Jarvis reviews, adds to research.json if valuable, dismisses researcher. No gate needed (read-only, no code changes). Joshua reviews findings on dashboard → approves → becomes fleet task.
 
 **GOLDEN PROMPTS — read and use verbatim when spawning council/supervisor:**
 - Supervisor: `fleet/supervisor-prompt.md` (frontend hater, taste police)
