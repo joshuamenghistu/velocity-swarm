@@ -114,12 +114,24 @@ Not a phase — a CONSTANT. Run 4-7 rolling until clean ×2 consecutive rounds. 
 - Codex: audits every commit, DMs manager + CCs Jarvis
 - Jarvis: routes findings, restarts runtime (3+ commits or at dismissal), refills slots
 
-**2-POINT DISMISSAL (per manager):**
-0. **Jarvis STEP 0 — visual gate BEFORE reading any diff (frontend only):** Open the manager's screenshots yourself. Write your own SEE description. Score 30-G independently WITHOUT looking at the manager's scores first. Then compare. Manager self-score ≥3 points above yours = credibility flag: their next 2 reports get quad-tier review. No 30-H verdict block in report = reject unread, same as missing tests.
-1. **Jarvis:** `ls tests/test_wave*` (missing=reject) → read test → pytest PASS → `git diff` every line → restart runtime + health → `/code-review` skill.
-2. **Auditor(s):** runtime logic, edge cases, data flow on commits.
-Supervisor's blind 30-G score is the third comparison — three scores diverging ≥3 = automatic quad-tier review.
-Findings → GitHub issue → route back → re-verify. Both sign off → `SendMessage(to:"manager-X", message:{type:"shutdown_request"})`.
+**DISMISSAL GATE (per manager) — CANNOT BE SKIPPED:**
+
+**Frontend managers:**
+0. **Supervisor gate (MANDATORY):** Supervisor visits live page (Chrome ext + Playwright mobile), scores 30-G blind, issues PASS/CORRECT/STOP. Supervisor must sign off before dismissal. Jarvis also scores independently (STEP 0).
+1. **Jarvis:** `ls tests/test_wave*` (missing=reject) → read test → pytest PASS → `git diff` → restart runtime + health → `/code-review`.
+2. Both Supervisor + Jarvis sign off → dismiss.
+
+**Backend managers:**
+1. **Jarvis:** `ls tests/test_wave*` → pytest PASS → `git diff` → restart runtime + health → `/code-review`.
+2. **Council gate (MANDATORY):** Send commits to Codex + Grok (+ Gemini if online) via `send-to-peer`. They review: runtime logic, edge cases, data flow, security. Council must sign off before dismissal. Jarvis CANNOT dismiss a backend manager without at least ONE council member reviewing the code.
+3. Both Jarvis + council sign off → dismiss.
+
+**NO MANAGER IS EVER DISMISSED WITHOUT THEIR DOMAIN'S GATE:**
+- Frontend without Supervisor sign-off = process failure (Rule 15)
+- Backend without council sign-off = process failure (Rule 15)
+- Jarvis dismissing alone because "auditors seem offline" = process failure — verify they're offline FIRST, announce SOLO GATE if truly dead
+
+Findings → GitHub issue → route back → re-verify.
 
 **CLEAN GATE:** Hunters NOTHING ×2 + Codex clean + all managers through dismissal.
 
