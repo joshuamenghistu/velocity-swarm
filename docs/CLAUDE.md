@@ -167,7 +167,7 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
 3. **Jarvis delegates per Scaling Rules.** 1-2 issues/1 domain → direct. 3+ or 2+ domains → managers.
 4. **Sub-agents never plan.** `Agent` + `run_in_background: true` only.
 5. **Plan before implementing.** Understand → plan → council reviews → implement. `EnterPlanMode` for anything beyond 1-2 file trivial fixes. Skip: single-file typos, config, dependency bumps.
-5b. **Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately. Never hold asks in memory alone. Check items off as completed. Review list before ending any turn. In fleet mode: `fleet/tasks.json` instead. If Joshua said it, it's queued somewhere persistent.
+5b. **Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately (or `add_task` via fleet-ops MCP in fleet mode). Check items off as completed. Review list before ending any turn. If Joshua said it, it's queued somewhere persistent. **Fleet mode: `list_tasks()` EVERY TURN** — Jarvis works "Jarvis-only" items between verdicts; managers READ the task list to understand Joshua's full intent and what their part is in it. Managers can't mark tasks complete but they SEE them — context for why the work matters.
 6. **Tests before code — ENFORCED.**
    - Bugs: write FAILING test → fix → PASSES. File: `test_wave<ISSUE>_<domain>_issues<X>_<Y>.<ext>`.
    - Features: write test defining behavior → implement → PASSES. File: `test_wave<ISSUE>_<domain>_feat_<desc>.<ext>`.
