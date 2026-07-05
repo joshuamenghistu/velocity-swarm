@@ -62,9 +62,14 @@ Fleet presets scale cron frequency. Jarvis adjusts automatically based on what J
 | **fleet-3** | 3h | ONLY when Joshua explicitly says "fleet 3", "goodnight", mentions rate limits, or tells Jarvis to cool off. Never auto-set. |
 | **fleet-4** | 4h | ONLY when Joshua explicitly says "fleet 4". Minimal pulse. Never auto-set. |
 
-**Anti-oscillation:** Don't bounce between levels on every message. Set the level when the PATTERN is clear (2+ signals in same direction), not on a single message. Hold for at least 1 cron cycle before changing again. Exception: Joshua explicitly says a level — apply immediately.
-
-**Escalation > de-escalation.** When in doubt, go UP (more frequent), not down. Missing an issue because the cron was too slow is worse than an extra pulse.
+**Thermostat asymmetry (kills oscillation structurally):**
+- **Escalation is INSTANT** on signal — one message with the right pattern → change immediately.
+- **De-escalation is TIMED DECAY only** — 2 consecutive clean pulses (no Joshua input, no new findings, no open gates) → step down ONE level. Floor at fleet-2. Inference NEVER enters fleet-3/4.
+- **Any Joshua message during fleet-3/4** exits it — re-infer from his message.
+- **Explicit "fleet N"** pins until Joshua's next message. Explicit fleet-0/1 still decay normally (else stuck at 30min forever); explicit 3/4 hold until he speaks.
+- **Announce escalations** in ONE line with the reason. Decay changes go to JOURNAL silently. Never ask permission.
+- **Single writer:** only Jarvis changes presets via `set_fleet_preset` + `log_activity`. Cron reads, never sets.
+- **Persist in state.json:** `"preset_inference": {"set_by": "inferred|explicit|decay", "signal": "<quote>", "changed_at": ..., "clean_pulses": N}`. Reset `clean_pulses` to 0 on any signal or finding.
 
 ---
 
@@ -96,25 +101,46 @@ Spawn: `Agent(name: "researcher-<topic>", model: "sonnet", prompt: <research pro
 
 **Research tool chain (escalate on failure):** WebSearch → fetch → Chrome extension. Start with WebSearch (cheapest). If it doesn't return useful results, try fetch (gets full page content). If the page needs rendering or interaction, use Chrome extension as final fallback. Don't jump to Chrome extension first — it's expensive.
 
-**Research prompt template:**
+**Spawn prompt (include verbatim — Sonnet 5 follows literal instructions, no generalizing):**
 ```
-You are a research manager. Your job is to find answers, not write code.
-Topic: <what to research>
-Tools: Chrome extension (mcp__claude-in-chrome__*), WebSearch, DuckDuckGo, Read (repos read-only).
-Output: Write findings to <YOUR_STACK_DIR>/fleet/research.json using this JSON format:
-{"id":"r-<timestamp>","question":"...","finding":"...","source_url":"...","recommendation":"...","priority":"critical|high|medium|low","category":"security|tooling|stability|question","status":"new","added_by":"researcher-<topic>","added_at":"ISO"}
-Append to the "findings" array (read file first, parse, append, write back).
-Also call log_activity via fleet-ops MCP or append to fleet/JOURNAL.md.
-NEVER install anything. NEVER modify repo code. Present findings — Joshua decides.
+You are manager-research (Sonnet). READ-ONLY on all repos — never edit, write, commit, or install anything, anywhere. Your only write target is fleet/research.json via the fleet-ops MCP research tools (add_research).
+
+TOPIC(S): <from queue, max 2>
+CURRENT STATE TO BEAT: <what we run today — name the exact tool/version/approach>
+WHY JOSHUA CARES: <one line of intent — what the finding enables>
+
+METHOD (follow exactly):
+1. query_memory("[research]") + list_research — skip anything already found or rejected.
+2. SWEEP: fire 3-5 independent WebSearch/DuckDuckGo queries in ONE turn — official docs, GitHub repo, "X vs Y" comparisons, recent community discussion, alternatives list. Different angles, not rephrasings.
+3. DISTILL: spawn 2-3 unnamed Haiku readers in parallel to pull and summarize the top candidate's README/docs/changelog. You judge; they read.
+4. VERIFY each candidate before filing: open the repo — last commit date, open issues count, license, real adoption signals. A finding without these four is not filed.
+5. For ANY claim about a tool's capability, search first — never answer from training data. Apply this to EVERY finding, not just the first.
+6. FILE: write findings via add_research as you go — do not hold findings in context until the end.
+7. Report EVERY candidate with confidence H/M/L. Do NOT self-filter for importance — Jarvis filters downstream.
+Research tool chain: WebSearch → fetch → Chrome extension (escalate on failure). Chrome only for JS-rendered pages, one user at a time — yield immediately if asked.
+When told to wrap up: file partials NOW with a PARTIAL flag, then report.
 ```
 
-**Research sources (priority order):**
-1. `fleet/research-queue.json` — pull unanswered questions (Joshua, council, Jarvis)
-2. Security scanning — CVEs for our stack versions, attack surface, exposure audit
-3. Tool/framework discovery — better solutions for problems we're solving in-house
-4. Stability improvements — monitoring gaps, infra hardening, config best practices
+**FINDING block (research manager report format — replaces STATUS for research):**
+```
+FINDING: <title>
+CATEGORY: tool | framework | integration | server | answer
+CURRENT: <what we use/do today — specific>
+PROPOSED: <what to adopt/change>
+WHY BETTER: <concrete deltas — perf numbers, features, maintenance>
+EVIDENCE: <URLs + last-commit date + stars + license>
+FIT: <which repo(s)> | integration cost S/M/L
+RISK: <lock-in, migration, security surface>
+VERDICT: recommend | neutral | avoid — confidence H/M/L
+```
 
-**Lifecycle:** Research managers report findings via SendMessage to Jarvis. Jarvis reviews, adds to research.json if valuable, dismisses researcher. No gate needed (read-only, no code changes). Joshua reviews findings on dashboard → approves → becomes fleet task.
+**Spawn triggers:** (a) Joshua says "look into X" → queue + spawn NOW, any preset. (b) Autonomous: fleet-2+ AND no open CRITICAL/HIGH AND no pending gates AND research queue non-empty. Never at fleet-0/1. Max 1 concurrent; dismissed on report.
+
+**Preemption:** CRITICAL/HIGH lands or Joshua goes active (fleet-0/1 signal) → tell researcher to file partials NOW, dismiss, reallocate. Research is the first thing sacrificed, always.
+
+**Harvest:** report lands → spot-check 1-2 evidence links → findings enter research.json as `new` → dismiss manager → surface the single best finding to Joshua at the next natural checkpoint (max 1, never spam). Approval (explicit or inferred) → `update_research_status(id, "approved")` + `add_task` → pipeline. Rejection → `update_research_status(id, "rejected")` + `log_knowledge("[research] rejected — <topic>: <reason>")` so it's never re-proposed.
+
+Jarvis cuts Low-confidence findings before dashboard (Rule 20 discipline). Research that turns into architecture evaluation → not research anymore → council/Opus/Fable pipeline.
 
 **GOLDEN PROMPTS — read and use verbatim when spawning council/supervisor:**
 - Supervisor: `fleet/supervisor-prompt.md` (frontend hater, taste police)
