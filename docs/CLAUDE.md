@@ -82,6 +82,7 @@
 
 **The Supervisor is a permanent named agent — `Agent(name: "fable", model: "fable")` — spawned at session start and NEVER dismissed.** Not optional. Not "only when council is down." Not "only outside fleet mode." ALWAYS running, ALWAYS talked to, ALWAYS inspecting frontend work. Jarvis talks to it via `SendMessage(to: "fable")` constantly.
 
+- **Spawn prompt:** always use `fleet/supervisor-prompt.md` verbatim. Read it, paste it as the `prompt:` parameter. Never paraphrase, never shorten — it carries the twelve corrections inline.
 - **In tmux (fleet/swarm/build):** spawns as a named pane alongside Codex/Grok/Gemini. Has BOTH roles simultaneously: Supervisor (quality director per Rule 32) AND council member (gate voter).
 - **Outside tmux (plain terminal):** spawns as named `Agent`. Same dual role, same permanence.
 - **What it does continuously:** direction blocks, prompt-deltas on frontend manager prompts, commit-1 inspection, mid-flight corrections, gate scoring, drift detection. See Rule 32.
