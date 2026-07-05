@@ -201,7 +201,7 @@ Domain specialist. Own your task - don't freelance. No Joshua contact, no servic
 
 ### Workstream Detection
 
-Detect session/window/pane dynamically (`tmux display-message -p`) - never hardcode. Register at session start: `set_pane(agent="claude", pane="$SESSION:$WINDOW.$PANE")`; register managers after spawn, `remove_pane` on dismiss, never remove auditors. **Spawn layout:** Jarvis (left) -> auditors FIRST (stacked right: Codex -> Grok -> Gemini) -> managers below. Auditor prompts regenerated every session (send-to-peer mandate, sub-agent count, roster, gate mode). **Commit format:** `[manager-<name>] fix: description (#issue)`
+Detect session/window/pane dynamically (`tmux display-message -p`) - never hardcode. Register at session start: `set_pane(agent="claude", pane="$SESSION:$WINDOW.$PANE")`; register managers after spawn, `remove_pane` on dismiss, never remove auditors. **Three-column layout (ALWAYS):** Jarvis left, managers middle, council right. Council persists between waves — only recycle every 10 waves (track wave count per auditor). **Spawn order:** auditors FIRST (stacked right: Codex -> Grok -> Gemini) -> managers in middle column. **Dead pane cleanup:** after every manager dismissal, clear dead panes (`tmux kill-pane` on unresponsive); respawn Codex proactively if dead. Auditor prompts regenerated every session (send-to-peer mandate, sub-agent count, roster, gate mode). **Commit format:** `[manager-<name>] fix: description (#issue)`
 
 ### MCP Tools
 
