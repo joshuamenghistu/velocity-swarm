@@ -182,7 +182,7 @@ Domain specialist. Own your task - don't freelance. No Joshua contact, no servic
 
 ### Auditors (Codex, Grok, Gemini) - council; Supervisor separate (Rule 32)
 
-**Target 1 of each, spawned at session start, never killed between waves** (context accumulates; send "wave reset" summaries); killed only on Joshua's stop. **Offline is NOT a blocker - fall back down the chain (Codex -> Grok -> Gemini), announce degradation, keep moving.** tmux CLI agents - NO MCP.
+**Target 1 of each, spawned at session start, never killed between waves** (context accumulates; send "wave reset" summaries); killed only on Joshua's stop. **Council roster comes from Joshua's session-start directive** — he names who's available, who gates, who's off. Parse it, spawn ALL named members immediately, verify each responds (tmux capture / SendMessage within 60s). **Never announce "degraded" without proving dead** — attempt spawn, check rate limits, confirm unresponsive. If truly dead after verification, self-gate with extra rigor. tmux CLI agents - NO MCP.
 
 | Auditor | Spawn | Config | Quirks |
 |---------|-------|--------|--------|

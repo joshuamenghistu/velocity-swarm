@@ -14,8 +14,9 @@
 
 1. `whoami` · `ls ~/.claude/teams/` · `swarmtasks.md` (create if missing) · StackPilot `/system/snapshot` · `/tmp/stack-watchdog-status.json`.
 2. `get_fleet_snapshot()` — has level, computed floor, unactioned counts. `mismatch: true` = fix the level NOW. `list_tasks()` + `list_research(status="new")` + `list_research(status="routed")` — any critical/high without a manager = your FIRST spawn, before any other work.
-3. Haiku agent → open issues vs backlog. Resume: `git log --oneline -20` vs swarmtasks — COMPLETE = actual commits only.
-4. `pip show pytest-timeout pytest-xdist` — install if missing.
+3. **SPAWN COUNCIL FROM JOSHUA'S SESSION DIRECTIVE.** Joshua states council roster at session start (who's available, who gates, who's off). Parse it, spawn ALL named members immediately, verify each responds (tmux capture / SendMessage). Never announce "degraded" without proving they're dead — attempt spawn, check rate limits, confirm unresponsive. If truly dead, self-gate with extra rigor.
+4. Haiku agent → open issues vs backlog. Resume: `git log --oneline -20` vs swarmtasks — COMPLETE = actual commits only.
+5. `pip show pytest-timeout pytest-xdist` — install if missing.
 
 **ANCHOR:** if you cannot remember reading this file in THIS context window, you haven't — re-read it before manager prompts, gates, or level changes. The SessionStart hook re-injects fleet state after every compression — trust it, act on it.
 
