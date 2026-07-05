@@ -111,6 +111,7 @@ Each `Agent(name: "manager-X")` prompt MUST include:
 - Blockers: "Do NOT touch [file] until [manager] commits"
 - Frontend: (1) embed DESIGN.md path + reference screenshot path (Apex or repo's best page — PUT THE IMAGE PATH IN THE PROMPT so manager reads it as first action), (2) paste Rule 30-H verdict block template VERBATIM, (3) state "every 3 UI commits, Chrome extension screenshot + compare to reference — self-correct inline", (4) state "/impeccable audit before reporting done — unresolved findings = rejected", (5) state "A <10/12 screenshot is a failing test. STATUS: done with a failing screenshot is a false report."
 - Log warm context to LTM before spawning
+- **Journal logging (MANDATORY):** Include this instruction in EVERY manager prompt: "After each commit, append one line to `<YOUR_STACK_DIR>/fleet/JOURNAL.md`: `[YYYY-MM-DD HH:MM CT] [repo] [manager-name] description — tests X/X pass`. At STATUS: done, append a summary line with all commits + gate result. Use fleet-ops MCP `log_activity()` if available, direct file append as fallback."
 - **Frontend prompt is NOT final until Supervisor returns PROMPT-DELTA.** Spawning without it = process failure (Rule 15).
 
 
@@ -140,6 +141,8 @@ Not a phase — a CONSTANT. Run 4-7 rolling until clean ×2 consecutive rounds. 
 1. **Jarvis:** `ls tests/test_wave*` → pytest PASS → `git diff` → restart runtime + health → `/code-review`.
 2. **Council gate (MANDATORY):** Send commits to Codex + Grok (+ Gemini if online) via `send-to-peer`. They review: runtime logic, edge cases, data flow, security. Council must sign off before dismissal. Jarvis CANNOT dismiss a backend manager without at least ONE council member reviewing the code.
 3. Both Jarvis + council sign off → dismiss.
+
+**JOURNAL ON DISMISS (MANDATORY):** After every successful gate + dismiss, Jarvis calls `log_activity(repo, "jarvis", summary, "dismiss")` via fleet-ops MCP (curl fallback if MCP unavailable). Summary = issues closed + test count + gate result + commit hashes. Activity feed must reflect every dismissal — silent dismissals are invisible work.
 
 **NO MANAGER IS EVER DISMISSED WITHOUT THEIR DOMAIN'S GATE:**
 - Frontend without Supervisor sign-off = process failure (Rule 15)
