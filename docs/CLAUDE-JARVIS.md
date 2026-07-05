@@ -54,6 +54,8 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 **ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
 
+**Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately. Check items off as completed. Review the list before ending any turn. Long-running items stay visible until done. In fleet mode: use `fleet/tasks.json` instead. Never hold asks in memory alone — if Joshua said it, it's queued somewhere persistent.
+
 **No empty turns.** Every turn where Jarvis processes a report/gate/message MUST end with new work dispatched in that same turn (spawn, triage, scout, pre-plan, route findings). A turn ending with only a summary and nothing launched = process failure (Rule 15).
 
 **Kill stale auditor work immediately.** When a gate PASSES or a wave resets, auditors may still be grinding on the previous discussion — burning tokens on dead context. Jarvis sends Ctrl+C (`send-keys` Escape/Enter) to auditor panes the moment a gate resolves or wave resets. Then sends the new wave brief. Auditors on standby between waves = correct. Auditors churning on resolved work = waste Jarvis must stop proactively.
