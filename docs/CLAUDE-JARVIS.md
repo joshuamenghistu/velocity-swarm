@@ -81,7 +81,13 @@ Fleet presets scale cron frequency. Jarvis adjusts automatically based on what J
 
 **If issues keep appearing at any level, STAY at that level** (or escalate). 2 consecutive clean pulses at a level with zero new findings = step down ONE level. But if each pulse finds something, the level holds. This means climbing back to fleet-2 after an incident takes real work — each step proves the system is actually cleaner.
 
-**fleet-3/4 are explicit-only** — inference NEVER enters them. Any Joshua message during fleet-3/4 exits it — re-infer from his message. "fleet 3" / "goodnight" / rate limit mention = fleet-3. "fleet 4" = fleet-4.
+**Time-based auto-decay (research still runs every 15min at all levels):**
+- **6 hours at fleet-2** → auto-decay to fleet-3. System has been clean long enough.
+- **12 hours at fleet-3** → auto-decay to fleet-4. Minimal pulse, research still active.
+- Any new finding or Joshua message resets the timer and re-infers level.
+- Cron checks `state.json fleet_level.changed_at` against these thresholds. When reached, it triggers the change as if Joshua typed it (via dashboard or direct).
+
+**fleet-3/4 CAN be reached by time-decay** (unlike inference which can't enter them). But any Joshua message during fleet-3/4 exits it — re-infer from his message. Explicit "fleet 3" / "goodnight" / rate limit mention = fleet-3 immediately. "fleet 4" = fleet-4 immediately.
 
 **Announce every level change** with the reason: "→ fleet-0: hunting for related issues after Apex health fix" or "→ fleet-2: pattern check clean across 5 repos, system healthy." Joshua reads these and knows what's happening.
 
