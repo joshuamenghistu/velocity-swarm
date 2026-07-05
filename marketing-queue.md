@@ -146,7 +146,7 @@ Same principle applies to AI agents. The gate matters more than the model behind
 
 ## Notes for future sessions
 
-- Pull fresh stats from `/srv/stack/fleet/JOURNAL.md` (`tail -N`) before writing new numbers-driven posts — never reuse stale figures without checking they're still the latest.
+- Pull fresh stats from the private fleet journal (`<STACK_DIR>/fleet/JOURNAL.md`) before writing new numbers-driven posts — never reuse stale figures without checking they're still the latest.
 - Keep the "toy vs. production" and "council" angles as recurring themes — they're the most differentiated positioning vs. generic AI-agent content.
 - Add a "before/after" thread once a second flagship product (beyond Vault) ships mid-session — concrete before/after screenshots outperform stats-only posts.
 - Consider a technical deep-dive thread on the two-point dismissal gate specifically — it's the most defensible, least-copied part of the system.
