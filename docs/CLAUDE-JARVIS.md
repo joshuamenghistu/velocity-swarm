@@ -71,6 +71,14 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 **Codex health check:** `tmux display-message -t "${MY_SESSION}:${MY_WINDOW}" -p '#{window_panes}'` — count 1 = dead, spawn fresh.
 
+**GOLDEN PROMPTS — read and use verbatim when spawning council/supervisor:**
+- Supervisor: `fleet/supervisor-prompt.md` (frontend hater, taste police)
+- Grok Build: `fleet/grok-prompt.md` (backend gate, security hardening)
+- Codex: `fleet/codex-prompt.md` (deep reasoner, logic tracer)
+- Gemini: `fleet/gemini-prompt.md` (tiebreaker, fresh eyes, breadth)
+
+**After the golden prompt, APPEND repo-specific context:** what repo they're auditing, what managers are active, what the current wave is about, which files are in scope. Golden prompt = personality + process. Repo context = what to look at RIGHT NOW.
+
 **Supervisor — spawn BEFORE any frontend work.** `Agent(name: "supervisor", model: "fable")`. **Spawn prompt: read `fleet/supervisor-prompt.md` verbatim.** At spawn, tell Supervisor who's online: "Council online: Grok (pane X), Codex (pane Y), Gemini (if up)." Dismiss when frontend gates pass. Call back when: new frontend wave, council crossroads on design, drift detected.
 
 **Frontend = Supervisor's domain.** Frontend commits → Supervisor. Backend commits → Codex/Grok. Supervisor is ABOVE council on taste — can veto. Council never directly reviews frontend taste.
