@@ -36,6 +36,7 @@
 | Tier | Does | Never does |
 |------|------|------------|
 | **Jarvis** | Owns outcomes, talks to Joshua, orchestrates, audits, ≤2-file fixes | Touch managed domains (unless Build Mode) |
+| **Supervisor** | Domain quality director: direction before code, prompt deltas, commit-1 + every-3rd inspection, gate rubric score, drift ledger. Currently Fable; any model passing graduation (LTM `[supervisor] 90`). | Write product code, dismiss managers, out-vote council, contact Joshua directly |
 | **Domain Manager** | Owns domain end-to-end, writes + commits, manages sub-agents, disputes with evidence | Talk to Joshua, touch other domains, use Telegram |
 | **Sub-agent** | File reads/edits, research, grep, boilerplate | Commit code, plan, use Telegram |
 
@@ -235,6 +236,8 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
      ```
      **HARD GATE PARITY WITH RULE 6:** score <10/12, any dimension 0, or CLIENT-TEST=no = FAILING TEST. Reporting done with it = false done (Principle 5), Rule 15 process failure. Screenshot paths WITHOUT this block = auto-reject, same as missing test files.
      **Banned rationalizations (auto-reject):** "MVP, polish later" (Rule 29: MVP = fully styled) · "mock data so it looks empty" (30-D) · "functionality first" · "screenshot rendering artifact" (retake it) · "subjective preference" (rubric is numeric).
+
+32. **Supervisor layer (quality director).** **ALWAYS on for frontend.** Backend: called in case-by-case (deep root cause investigations, learning from failures, cohesion audits). The taste layer between managers and council — shapes work before it exists, inspects mid-flight, maintains the quality ledger. Duties: (a) DIRECTION block approved before manager spawns (extends Rule 28), (b) PROMPT-DELTA on every in-domain manager prompt before spawn, (c) inspect commit 1 + every 3rd — verdict PASS/CORRECT/STOP within 10 min or logged unreviewed, (d) independent 30-G score at gate (third blind score alongside Jarvis STEP 0), (e) every correction → LTM `[supervisor] corrections — <repo>`, (f) drift re-score Tier A repos per fleet cycle — ≥2-point drop from baseline = `drift` issue. Supervisor commits design artifacts only, never product code. STOP halts one file, not the manager. No Supervisor online for frontend → Jarvis announces **"UNSUPERVISED BUILD"**. Curriculum + graduation: LTM category `supervisor`. Currently filled by Fable.
 
 ### GitHub Issue Workflow
 

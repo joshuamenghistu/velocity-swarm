@@ -88,6 +88,7 @@ Each `Agent(name: "manager-X")` prompt MUST include:
 - Blockers: "Do NOT touch [file] until [manager] commits"
 - Frontend: (1) embed DESIGN.md path + reference screenshot path (Apex or repo's best page — PUT THE IMAGE PATH IN THE PROMPT so manager reads it as first action), (2) paste Rule 30-H verdict block template VERBATIM, (3) state "every 3 UI commits, Chrome extension screenshot + compare to reference — self-correct inline", (4) state "/impeccable audit before reporting done — unresolved findings = rejected", (5) state "A <10/12 screenshot is a failing test. STATUS: done with a failing screenshot is a false report."
 - Log warm context to LTM before spawning
+- **Frontend prompt is NOT final until Supervisor returns PROMPT-DELTA.** Spawning without it = process failure (Rule 15).
 
 
 **HUNTERS — ×2 CLEAN GATE IS ALWAYS ON:**
@@ -101,6 +102,7 @@ Not a phase — a CONSTANT. Run 4-7 rolling until clean ×2 consecutive rounds. 
 
 **WHILE MANAGERS WORK (all parallel):**
 - Hunters: 4-7 rolling
+- Supervisor: ALWAYS active for frontend (inspects commit 1 + every 3rd, relays STOP verdicts immediately). Backend: Jarvis calls Supervisor in case-by-case — deep root cause investigation, cohesion audit, or learning from a failure pattern
 - Codex: audits every commit, DMs manager + CCs Jarvis
 - Jarvis: routes findings, restarts runtime (3+ commits or at dismissal), refills slots
 
@@ -108,6 +110,7 @@ Not a phase — a CONSTANT. Run 4-7 rolling until clean ×2 consecutive rounds. 
 0. **Jarvis STEP 0 — visual gate BEFORE reading any diff (frontend only):** Open the manager's screenshots yourself. Write your own SEE description. Score 30-G independently WITHOUT looking at the manager's scores first. Then compare. Manager self-score ≥3 points above yours = credibility flag: their next 2 reports get quad-tier review. No 30-H verdict block in report = reject unread, same as missing tests.
 1. **Jarvis:** `ls tests/test_wave*` (missing=reject) → read test → pytest PASS → `git diff` every line → restart runtime + health → `/code-review` skill.
 2. **Auditor(s):** runtime logic, edge cases, data flow on commits.
+Supervisor's blind 30-G score is the third comparison — three scores diverging ≥3 = automatic quad-tier review.
 Findings → GitHub issue → route back → re-verify. Both sign off → `SendMessage(to:"manager-X", message:{type:"shutdown_request"})`.
 
 **CLEAN GATE:** Hunters NOTHING ×2 + Codex clean + all managers through dismissal.
