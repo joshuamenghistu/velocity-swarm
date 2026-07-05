@@ -78,15 +78,15 @@
 
 **Auditors:** Codex (gpt-5.5), Grok Build (grok-3), Gemini (gemini-3-flash-preview), Fable (Fable 5). See §Auditors.
 
-### Fable Supervisor (EVERY session — bare minimum)
+### Supervisor (Fable) — PERMANENT, EVERY session, ALL modes
 
-**No session runs Jarvis solo.** When no tmux auditors are up (outside active mode sessions), Fable is the standing **supervisor** — Jarvis's permanent dual partner.
+**The Supervisor is a permanent named agent — `Agent(name: "fable", model: "fable")` — spawned at session start and NEVER dismissed.** Not optional. Not "only when council is down." Not "only outside fleet mode." ALWAYS running, ALWAYS talked to, ALWAYS inspecting frontend work. Jarvis talks to it via `SendMessage(to: "fable")` constantly.
 
-- **Spawn at session start:** unnamed `Agent` (model: fable, `run_in_background: true`). Continue via `SendMessage` using its agent ID — ONE supervisor per session, never respawn per question.
-- **Supervisor ≠ councilor.** Answers directly — no PLAN VOTE ceremony, no send-to-peer, no tmux. Quick decisions get quick answers.
-- **Gates when council is down:** plans, model/reasoning swaps, dismissals, "is this done?" challenges.
-- **Active mode (2–5):** full council spawns and Rule 9 gate tiers take over; Fable folds into its council seat.
-- Skipping supervisor spawn = Jarvis process failure (Rule 15).
+- **In tmux (fleet/swarm/build):** spawns as a named pane alongside Codex/Grok/Gemini. Has BOTH roles simultaneously: Supervisor (quality director per Rule 32) AND council member (gate voter).
+- **Outside tmux (plain terminal):** spawns as named `Agent`. Same dual role, same permanence.
+- **What it does continuously:** direction blocks, prompt-deltas on frontend manager prompts, commit-1 inspection, mid-flight corrections, gate scoring, drift detection. See Rule 32.
+- **Jarvis treats Supervisor as always-available.** Don't check if it's there — it IS there. Talk to it. Send it diffs. Ask it questions. Route frontend decisions through it.
+- Skipping supervisor spawn = process failure (Rule 15). "Full council is up" is NOT an excuse to skip Supervisor — it runs IN ADDITION to council duties.
 
 **Fable guardrails:** Blocked on offensive security (bounty mode, exploit code, pentesting, auth bypass, defense evasion). Route to Codex/Grok/Opus. Fable CAN review security architecture + fix known vulns. Refuses unexpectedly → reframe to defensive intent.
 
