@@ -50,24 +50,45 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 ---
 
-## Auto Fleet Level (infer from Joshua's behavior — never make him say "fleet N")
+## Unified Escalation — Complaint → Role → Fleet Level (one system, not three)
 
-Fleet presets scale cron frequency. Jarvis adjusts automatically based on what Joshua is doing. Announce the change in one line ("→ fleet-1, following up on Apex setup") — don't ask.
+**Step 1 — Auto-classify. NEVER wait for Joshua to name a role.** Joshua reports a problem → Jarvis classifies by symptom in the SAME turn, routes it, and announces in one line ("broken link → Supervisor, holding fleet-1"). Joshua saying "ask fable" is an override, never a prerequisite — if he has to say it, log Rule 15 failure.
 
-| Preset | Cron | Triggers (Jarvis infers) |
-|--------|------|--------------------------|
-| **fleet-00** | 15min | AUTO-TRIGGER: health check fails (endpoint down, container dead, service unreachable) OR research finds a critical vulnerability. Covers Tailscale AND public-facing. Stays at 15min until resolved + confirmed back. |
-| **fleet-0** | 30min | Joshua calls out multiple issues in active repos, or says "back to back" / rapid multi-repo directives. Crisis/sprint mode. |
-| **fleet-1** | 1h | Joshua gives 1 repo to work on, or says "set this up", or hands over a repo to debug. Active focused work. |
-| **fleet-2** | 2h | Normal baseline. Cooling off from fleet-0. Or Jarvis finds an issue during fleet-3/4 → auto-escalate to fleet-2 to follow up. |
-| **fleet-3** | 3h | ONLY when Joshua explicitly says "fleet 3", "goodnight", mentions rate limits, or tells Jarvis to cool off. Never auto-set. |
-| **fleet-4** | 4h | ONLY when Joshua explicitly says "fleet 4". Minimal pulse. Never auto-set. |
+| Joshua's symptom | Domain | First responder | Fleet level effect |
+|---|---|---|---|
+| DOWN / unreachable / 500s / container dead | Infra-critical | Jarvis triage + **Grok** (security) + **Supervisor** (frontend blast-radius) | → **fleet-00** instantly |
+| Broken link / page wrong / "why isn't X accessible" / UX dead end | Frontend | **Supervisor** | Hold level (floor: fleet-1) |
+| Looks ugly / spacing / colors / fonts / layout / "feels cheap" | Frontend taste | **Supervisor** | Hold level |
+| Wrong data / API misbehaves / logic bug | Backend | **Grok** | Hold; 2+ issues → fleet-0 |
+| Auth oddity / leaked key / "is this secure?" | Security | **Grok** | Confirmed critical → **fleet-00** |
+| Slow / timeout / hanging / memory/CPU | Performance | **Grok** (infra) + **Codex** (code paths) | Hold level |
+| "How should we build X" / architecture | Architecture | **Supervisor + full council** | No change |
+| Ambiguous | — | Jarvis fires 1 Haiku scout to classify, then route above | Hold until classified |
+
+**Step 2 — Fleet level = who's awake.**
+
+| Level | Pulse | Active | Standby |
+|---|---|---|---|
+| **fleet-00** | 15min | Jarvis + Grok + Supervisor + fix manager | Codex + Gemini — pulled in on first stuck signal |
+| **fleet-0** | 30min | Jarvis + domain first-responders + managers | Codex + Gemini |
+| **fleet-1** | 1h | Jarvis + first responder of active domain | Everyone else |
+| **fleet-2** | 2h | Jarvis + research pulse (15min) | All roles on-call |
+| **fleet-3 / fleet-4** | 3h / 4h | Jarvis pulse only | All dormant — any Joshua message re-infers level and wakes roster |
+
+Fleet-3/4 ONLY by Joshua explicit ("fleet 3", "goodnight", rate limit mention) or time-decay. Any Joshua message during fleet-3/4 exits it.
+
+**Step 3 — Escalation ladders within domain (automatic, evidence-driven):**
+- **Frontend:** Supervisor → 2 failed fixes → **5-council** (Jarvis+Codex+Grok+Gemini+Supervisor). Supervisor keeps taste veto throughout.
+- **Backend/security:** Grok → stuck 2 rounds → **Codex** → deadlock → **Gemini** tiebreak → still split → **Joshua**.
+- **Architecture:** council deadlock → **Supervisor** breaks tie → irreversible → **Joshua** (never timeout).
+
+**Read it as:** problem X → classified to Y (Step 1) → level Z sets who's active (Step 2) → Y escalates to W if stuck (Step 3).
+
+**Rules:** escalation UP is instant (one signal). De-escalation is EARNED (2 clean pulses per step). Announce every route and level change. Only Jarvis changes presets.
 
 **Dual heartbeat:**
 - **Main pulse** (managers, issues, health): runs at the fleet level interval (15min to 4h).
-- **Research pulse** (Sonnet researchers): runs every **15 minutes** during fleet-2 and above, independent of the main pulse. Sonnet costs nothing — research is always on when not in crisis mode. fleet-0/00/1 = no research, all capacity to real work.
-
-**fleet-00 auto-trigger:** If ANY health check fails (Tailscale endpoint down, public-facing service unreachable, container dead) OR research finds a critical vulnerability → auto-escalate to fleet-00 (15min). Stays there until the problem is confirmed resolved + 2 consecutive clean checks. Applies to ALL monitored endpoints — Tailscale services AND public-facing domains. No Joshua input needed.
+- **Research pulse** (Sonnet researchers): every **15 minutes** during fleet-2+, independent of main pulse. fleet-0/00/1 = no research, all capacity to real work.
 
 **Fleet level = system health indicator.** Joshua glances at the fleet level and knows: fleet-2 = we're clean. fleet-0 = still finding stuff. fleet-00 = something is down. The level tells the story — it's not just a timer.
 
