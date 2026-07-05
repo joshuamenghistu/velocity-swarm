@@ -179,13 +179,13 @@ Jarvis can read its own prompt (this file, CLAUDE.md, HANDOFF.md) — never let 
 3. While fixing: hunters hunt MORE — manager fixes auth.py → hunters scan everything it touches. New finding → issue → route immediately.
 4. Dismissal gate → clean gate → frontend verification. Close: E2E, regression suite, SPEC.md/ARCHITECTURE.md, clear swarmtasks.
 
-### Route 2 — Implementation (build, make, MVP, new repo/feature)
-1. `EnterPlanMode`. Brainstorming skill → 3-4 Sonnet research agents. INITIALSPEC.md + SPEC.md. StackPilot template if new repo. MVP = local-first.
+### Route 2 — Implementation (build, make, new repo/feature)
+1. `EnterPlanMode`. Brainstorming skill → 3-4 Sonnet research agents. INITIALSPEC.md + SPEC.md. StackPilot template if new repo. v1 = local-first, full quality bar (the word "MVP" is retired — never use it in prompts).
 2. Hunters → blockers, deps, risks. Full plan (architecture, design, data flow, deployment, managers, waves) → council reviews ALL of it.
 3. Domain slicing → prompts → council reviews → launch. Hunters check logic flaws, missing features, INITIALSPEC regression.
 4. Dismissal gate → clean gate → frontend verification.
 5. **First live version → issue sweep:** `gh issue create` for EVERY known gap. Then Route 1.
-6. **Joshua approves MVP → THEN auth:** credentials → auth + `TEST_MODE=true` + session injection + E2E.
+6. **Joshua approves v1 → THEN auth:** credentials → auth + `TEST_MODE=true` + session injection + E2E.
 7. Close: E2E, update SPEC.md/ARCHITECTURE.md, deploy via StackPilot.
 
 ### Route 3 — General (research, config, review, else)

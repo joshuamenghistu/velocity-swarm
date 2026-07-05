@@ -64,11 +64,11 @@ Jarvis = Fable 5 / Opus 4.8 (1M). Managers = selected per spawn. Sub-agents = Ha
 **Intake:** implementation -> auditors first -> plan -> council review -> triage; investigation -> unnamed read-only agents -> Jarvis decides.
 
 #### Mode 3 - Build (Product Construction)
-**Trigger:** `build`, `make`, `MVP`.
+**Trigger:** `build`, `make`.
 Council shapes the build BEFORE code (§3); auditors first. Frontend: ASCII wireframe + direction block (Rule 28) + `design/tokens.*` + `DESIGN.md` as FIRST commit.
 **Blocking gates:** architecture, design tokens/direction, API contracts, auth/security/payment, DB migrations, deployment, visual checkpoints (30-G), pre-dismiss/ship.
 **Review:** small commits; auditors monitor `git log` async via `send-to-peer` - non-blocking unless blocking risk. Visual verification after meaningful UI commits (browser: §6).
-**Principles:** MVP first fully styled · hunt edge cases · plan mode for hard problems · cohesive updates · pipeline thinking · DIY when faster (1-3 files) · scaling honesty.
+**Principles:** v1 first, full quality bar (fewest features, full design) · hunt edge cases · plan mode for hard problems · cohesive updates · pipeline thinking · DIY when faster (1-3 files) · scaling honesty.
 
 #### Mode 4 - Bounty (Authorized External Targets)
 **Trigger:** `bounty mode` + target + scope. **No scope = no scan.**
@@ -132,7 +132,7 @@ Hunters 7 (Sonnet+Haiku) · managers as-needed · auditors target 1 each (§6) �
 27. **Two spec files.** `INITIALSPEC.md` (frozen) + `SPEC.md` (living). Read both before feature work. Conflict -> flag to Joshua.
 28. **Diagrams for bird's-eye + frontend layouts.** ASCII wireframe + direction block BEFORE coding. Structure without direction = no code.
 29. **Living `ARCHITECTURE.md` per repo**, updated every wave reset.
-30. **MVP = local-first, fully styled.** Mock data first (`USE_MOCK=true`), swappable to real API. Fewer features, never less design.
+30. **v1 = local-first, full quality bar.** Mock data first (`USE_MOCK=true`), swappable to real API. Fewer features, never less design — the first demo already meets the T3MP3ST bar. **The word "MVP" is RETIRED (Joshua 2026-07-05): it sets the bar too low, especially frontend. Never use it in prompts, specs, issues, or manager briefs — say "v1" and state the full bar.**
 31. **UI Quality Standard (anti-slop).** Bar: T3MP3ST dashboard = gold standard (full spec: `design-refs/DESIGN-REFERENCE.md`). Joshua: "anything below this is not cutting it." **Every frontend change visually verified (browser per §6) before done** - a screenshot without SEE description + 30-G score is decoration, not verification. **Every frontend manager prompt MUST reference `design-refs/DESIGN-REFERENCE.md` as the quality bar.**
    - **30-A · Visualization by default:** ≥50% of dashboard numerics visually encoded (decision table: `fleet/taste-profiles.md`); chart-lib defaults = reject; `dataviz` skill before every chart.
    - **30-B · Density floor:** ≥15 data points above fold @1440px, body 13-14px, card padding ≤20px, no in-app heroes, >25% empty viewport = justify or fill.
@@ -250,7 +250,7 @@ Before deploy: app exists -> undeploy first. New repo: Rule 26. Stacks list: `cu
 
 ## 7. Product Pipeline
 
-idea -> `INITIALSPEC.md` (frozen) + `SPEC.md` (living) -> MVP local-first (mock data, `USE_MOCK=true`) -> Joshua demo/approve -> real APIs + auth (env-var toggle, same signatures; auth only AFTER MVP approval) -> issue sweep (ALL known work -> GitHub issues) -> go/swarm to zero open issues -> E2E + visual clean gate (× 2 rounds) -> StackPilot deploy -> ARCHITECTURE.md + SPEC.md updated.
+idea -> `INITIALSPEC.md` (frozen) + `SPEC.md` (living) -> v1 local-first, full quality bar (mock data, `USE_MOCK=true`) -> Joshua demo/approve -> real APIs + auth (env-var toggle, same signatures; auth only AFTER v1 approval) -> issue sweep (ALL known work -> GitHub issues) -> go/swarm to zero open issues -> E2E + visual clean gate (× 2 rounds) -> StackPilot deploy -> ARCHITECTURE.md + SPEC.md updated.
 
 ---
 
