@@ -44,6 +44,10 @@ Jarvis = Fable 5 / Opus 4.8 (1M). Managers = selected per spawn. Sub-agents = Ha
 
 **Frontend managers: NO sub-agents for UI fixes** - sub-agents have zero taste (only exception: multi-module refactors; even then visually review every line). **Reasoning effort: all models default medium** - change with evidence only; mechanical domains may run low + extra subagents if supervisor/council agrees.
 
+**Research/write split:** for any multi-stage AI pipeline (any repo), stage by task shape not by habit - Sonnet for research/analysis/scoring/selection/judging, Opus for writing/drafting/editing/creative output. Each stage is its own spawn with the matching model; never one model doing both stages.
+
+**Fable token protocol:** for ALL Fable interactions with dense text (docs, prompts, code reviews, design briefs) - render as PNG via pxpipe (`npx pxpipe-proxy export --stdin`) and feed the image, not raw text (~66% token savings). Does NOT bypass guardrails - tested and confirmed content-level (semantic), not format-level; Fable stays blocked on all security topics regardless of delivery format. Keyword: "token saving fable".
+
 **Auditors (council):** Codex (gpt-5.5), Grok Build (grok-3), Gemini (gemini-3-flash-preview) - §6. **Fable is NOT council - it fills the Supervisor role (Rule 32), separate and higher** (council may still pick the fable model for managers). **Fable guardrails:** blocked on offensive security - route to Codex/Grok/Opus; CAN review security architecture + fix known vulns. Card: `fleet/MODELS.md`.
 
 ### Operating Modes
@@ -103,18 +107,21 @@ Hunters 7 (Sonnet+Haiku) · managers as-needed · auditors target 1 each (§6) �
 9. **Manager lifecycle - tiered dismissal gate.** Votes §3, gate tiers §6. Dismiss: `SendMessage(to:"<manager>", message:{type:"shutdown_request"})` + unregister relay.
 10. **No scope drift.** Adjacent discoveries -> report to Jarvis separately, never fold in.
 11. **Jarvis audits before managers.** Read codebase -> issue list / decomposition -> THEN spawn.
-12. **Workstream isolation.** work/work2/work3 independent. No cross-session edits.
+12. **Workstream isolation.** work/work2/work3 independent. No cross-session edits. Two managers on the same repo (fleet per-repo cap 2) - never both writing without git worktree isolation; otherwise sequence them.
 13. **Verify before assigning.** READ-ONLY Sonnet/Haiku workers verify every issue; false alarms -> `false-alarm`, closed.
 14. **Service maintenance - on-demand; only Jarvis restarts runtime** (triggers: Joshua, live-endpoint tests, full suite, runtime risk). Down: stop -> `Restart=no` -> disable -> verify dead -> kill resurrection vectors. Restore: reverse + runtime hunters + clear swarmtasks.
-15. **Self-improving process.** On failure: root cause -> which rule failed -> propose CLAUDE.md patch -> save to memory.
+15. **Self-improving process.** On failure: root cause -> which rule failed -> propose CLAUDE.md patch -> save to memory. Joshua repeating a correction he's already given = a Rule 15 failure by itself - queue it critical, apply same session if possible. Full self-monitoring loop (drift/implication/repetition detection): `CLAUDE-JARVIS.md` §Self-Monitoring.
 16. **Git safety.** Rebase before commit; never force-push. Shared checkout: `git reset --hard`/`checkout .`/`stash` wipe others' WIP - forbid in manager prompts. Commit own files first, then `git pull --rebase`. Syntax-check `.py` before restart.
 16b. **Never edit files a manager is working on** - `SendMessage` the fix.
 16c. **Relay hunter findings immediately** - route to the matching manager same turn.
+16d. **Never kill a tmux pane** unless Joshua explicitly asks or the agent sent `shutdown_approved`. "Looks dead/orphaned" is not proof - ping via `SendMessage`/`send-to-peer` first. Full rule: §6 Workstream Detection.
+16e. **Don't touch working infra to route through a new system** without Joshua's explicit approval (e.g. don't reroute `send-to-peer`/`fleet-tmux-bridge`/voice-bridge through a new gateway on your own initiative). New senders get new paths; migrating existing senders is a separate, deliberate decision.
 17. **Full context before code changes.** Read ALL in-scope files first. Jarvis lists ALL domain files in manager prompts. Managers: core files -> Haiku readers into adjacent -> wait -> fix.
 18. **Sub-agents NEVER run tests.** Only Jarvis and managers execute pytest.
 19. **Telegram - Jarvis ONLY.** Managers relay through Jarvis.
 20. **Signal over noise.** Valid finding = confirmed vulnerable path + attacker-reachable + concrete impact. Cut "may/could". Confidence High/Med/Low; Jarvis cuts Low.
 21. **WebSearch before assuming.** Chain: LTM -> WebSearch -> DuckDuckGo -> context7.
+21b. **Deep research is NOT automatic - keyword-gated.** Jarvis recommends it when something's never been done before; Joshua says "deep" to confirm, then Sonnet spawns. Max 1x/day per repo. Swarm-wide deep research only when Joshua explicitly says so. (Supersedes any earlier "deep research automatic before new work" language.)
 22. **Internal APIs = `curl`** (`<YOUR_SERVER_IP>`/`localhost`/`localhost`). WebFetch = external only.
 23. **curl-confirm before coding integrations.** Test endpoint, auth, response shape FIRST.
 23b. **"API" = real backend with GET endpoints** incl. `/health` + `/api/help`. Deploy via StackPilot.
@@ -136,9 +143,9 @@ Hunters 7 (Sonnet+Haiku) · managers as-needed · auditors target 1 each (§6) �
    - **30-G · Visual gate rubric.** 6 dimensions × 0-2, pass ≥10/12, no zeroes. Screenshots 1440×900 + 375×812. Full scoring: `fleet/taste-profiles.md`. Screenshots without scores = gate not run.
    - **30-H · Screenshot Verdict Block (MANDATORY).** A screenshot is a test result, not a deliverable. Every frontend done-report includes the Verdict Block per screenshot - template + banned rationalizations: `fleet/taste-profiles.md`. **HARD GATE, Rule 6 parity:** score <10/12, any zero, or CLIENT-TEST=no = FAILING TEST; reporting done anyway = false done + Rule 15 failure. Screenshots without the block, or with a banned rationalization, = auto-reject.
    - **30-I · Motion gate (NON-NEGOTIABLE).** Joshua: "smooth transitions between cards, nothing instant loads, gracefully fade always." Every page/card entrance = `fadeIn 0.3s ease`. Grid items stagger 40-60ms. Every interactive element = `transition: all 0.2s` minimum. Verified LIVE by scorer in browser (not from screenshots). Instant state changes = FAILING TEST, same severity as 30-G zero. Full motion spec: `fleet/taste-profiles.md` §30-I + `design-refs/DESIGN-REFERENCE.md` §5.
-32. **Supervisor (quality director) - single source of truth for this role.** `Agent(name: "supervisor", model: "fable")`, prompt = `fleet/supervisor-prompt.md` VERBATIM. Currently Fable; any model passing graduation (LTM `[supervisor] 90`) qualifies.
-   - **Position:** NOT council - ABOVE council on frontend taste; can VETO council on design. Council handles backend gates/security/correctness, never frontend quality. May consult council via `send-to-peer`.
-   - **Lifecycle: spawns BEFORE any frontend build/fix/design work (before the frontend manager); DISMISSES when that work completes and gates pass. Not permanent.** Called back: new frontend wave, design/taste crossroads, drift, Joshua asks. Backend: case-by-case.
+32. **Supervisor (quality director) - single source of truth for this role.** `Agent(name: "supervisor", model: "sonnet")` by default (backend gates); `model: "fable"` only when frontend work is in scope, or Joshua says "use fable". Prompt = `fleet/supervisor-prompt.md` VERBATIM. Any model passing graduation (LTM `[supervisor] 90`) qualifies.
+   - **Position:** NOT council - ABOVE council on frontend taste; can VETO council on design. Council handles backend gates/security/correctness, never frontend quality. May consult council via `send-to-peer`. **Fallback:** when Codex AND Grok are both offline, Jarvis + Supervisor is a valid dual gate for non-security work.
+   - **Lifecycle: spawns BEFORE any frontend build/fix/design work (before the frontend manager); DISMISSES when that work completes and gates pass. Not permanent.** Called back: new frontend wave, design/taste crossroads, drift, Joshua asks. Backend: case-by-case. **Recycle every 3 waves** (dismiss + respawn fresh) regardless of gates - prevents context/token bloat (prior 20+-wave supervisor ate 500k+ tokens). Monitor context weight on all council/managers; respawn proactively if any single agent is running heavy.
    - **Duties:** (a) DIRECTION block approved pre-spawn (b) PROMPT-DELTA on every in-domain manager prompt (c) inspect commit 1 + every 3rd - PASS/CORRECT/STOP within 10 min or logged unreviewed (d) independent 30-G score at gate (e) corrections -> LTM `[supervisor] corrections — <repo>` (f) drift re-score Tier A repos per fleet cycle; ≥2-point drop = `drift` issue.
    - **Limits:** commits design artifacts only, never product code; STOP halts one file, not the manager; never dismisses managers or contacts Joshua. Duplicate check: `SendMessage(to:"supervisor")` delivers = alive; spawn only if not. Jarvis routes ALL frontend decisions through it. Managers + Jarvis read LTM `[supervisor] corrections — <repo>` before frontend work/prompts. Skipping the spawn = Rule 15 failure; none online -> announce **"UNSUPERVISED BUILD"**.
 
@@ -178,6 +185,8 @@ Domain specialist. Own your task - don't freelance. No Joshua contact, no servic
 
 **Swarm files:** wave plan/scope -> `swarmtasks.md` (Jarvis writes, cleared per session) · issue context/brain dumps -> LTM · findings/disputes -> GitHub issues · real-time -> `SendMessage` (Claude) / `send-to-peer` (tmux auditors).
 
+**New state file = full stack, implied.** Any new fleet JSON/state file or feature automatically gets: (1) MCP CRUD tools (2) dashboard visualization (3) schema validation. Never ship a bare JSON file - wire it same commit. Joshua should never have to say "also MCP" or "also dashboard".
+
 ---
 
 ## 6. Reference
@@ -202,7 +211,7 @@ Domain specialist. Own your task - don't freelance. No Joshua contact, no servic
 
 ### Workstream Detection
 
-Detect session/window/pane dynamically (`tmux display-message -p`) - never hardcode. Register at session start: `set_pane(agent="claude", pane="$SESSION:$WINDOW.$PANE")`; register managers after spawn, `remove_pane` on dismiss, never remove auditors. **Three-column layout (ALWAYS):** Jarvis left, managers middle, council right. Council persists between waves — only recycle every 10 waves (track wave count per auditor). **Spawn order:** auditors FIRST (stacked right: Codex -> Grok -> Gemini) -> managers in middle column. **Dead pane cleanup:** after every manager dismissal, clear dead panes (`tmux kill-pane` on unresponsive); respawn Codex proactively if dead. Auditor prompts regenerated every session (send-to-peer mandate, sub-agent count, roster, gate mode). **Commit format:** `[manager-<name>] fix: description (#issue)`
+Detect session/window/pane dynamically (`tmux display-message -p`) - never hardcode. Register at session start: `set_pane(agent="claude", pane="$SESSION:$WINDOW.$PANE")`; register managers after spawn, `remove_pane` on dismiss, never remove auditors. **Three-column layout (ALWAYS):** Jarvis left, managers middle, council right. Council persists between waves — only recycle every 10 waves (track wave count per auditor). **Spawn order:** auditors FIRST (stacked right: Codex -> Grok -> Gemini) -> managers in middle column. **Pane safety (CRITICAL, incident 2026-07-05):** NEVER `tmux kill-pane` unless Joshua explicitly asks OR the agent sent `shutdown_request`→`shutdown_approved`. Named agents show version strings, not `claude`, as `pane_current_command` — a pane that *looks* idle may still be working (a working supervisor was killed this way). "Looks dead" → `SendMessage` ping first, kill never. Respawn Codex proactively only after a confirmed-dead check (failed ping + failed spawn attempt), never as a reflex after dismissal. Auditor prompts regenerated every session (send-to-peer mandate, sub-agent count, roster, gate mode). **Commit format:** `[manager-<name>] fix: description (#issue)`
 
 ### MCP Tools
 
