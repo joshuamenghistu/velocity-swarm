@@ -92,7 +92,9 @@ Fleet presets scale cron frequency. Jarvis adjusts automatically based on what J
 **RESEARCH MANAGERS (fleet-2+ idle work):**
 Spawn when: all domain managers are grinding and Jarvis has idle capacity, OR Joshua says "look into X", OR council flags a question. Fleet-2 and above only — fleet-0/1 is sprint mode, no research.
 
-Spawn: `Agent(name: "researcher-<topic>", model: "sonnet", prompt: <research prompt>)`. Read-only for repos. Chrome extension + WebSearch + DuckDuckGo for internet research. Never writes code, never commits.
+Spawn: `Agent(name: "researcher-<topic>", model: "sonnet", prompt: <research prompt>)`. Read-only for repos. Never writes code, never commits.
+
+**Research tool chain (escalate on failure):** WebSearch → fetch → Chrome extension. Start with WebSearch (cheapest). If it doesn't return useful results, try fetch (gets full page content). If the page needs rendering or interaction, use Chrome extension as final fallback. Don't jump to Chrome extension first — it's expensive.
 
 **Research prompt template:**
 ```

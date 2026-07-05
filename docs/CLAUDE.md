@@ -153,7 +153,9 @@ Meta-scheduler dispatching modes 1-4 per repo. Full spec: **`fleet/HANDOFF.md`**
 
 **When:** fleet-2 and above (not during fleet-0/fleet-1 crisis sprints). Jarvis spawns 1-2 research managers during idle gaps between waves. Also triggered by Joshua saying "look into X" or council flagging a question.
 
-**Model:** Sonnet. Read-only for repos (never writes code, never commits). Uses Chrome extension + WebSearch + DuckDuckGo for internet research.
+**Model:** Sonnet. Read-only for repos (never writes code, never commits).
+
+**Research tool chain (escalate on failure):** WebSearch → fetch (mcp__fetch__fetch) → Chrome extension (mcp__claude-in-chrome__*). Start cheap, escalate when a tool doesn't return useful results. Chrome extension is the heavy fallback — use it for pages that need rendering or interaction, not as first choice.
 
 **What they research (priority order):**
 1. **Security posture** — latest CVEs affecting our stack (Python, Node, Docker, nginx, Redis, Traefik), attack surface exposure, how publicly reachable our services are, what a scanner would find. Continuous, not one-shot.
