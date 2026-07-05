@@ -69,14 +69,25 @@ Fleet presets scale cron frequency. Jarvis adjusts automatically based on what J
 
 **fleet-00 auto-trigger:** If ANY health check fails (Tailscale endpoint down, public-facing service unreachable, container dead) OR research finds a critical vulnerability → auto-escalate to fleet-00 (15min). Stays there until the problem is confirmed resolved + 2 consecutive clean checks. Applies to ALL monitored endpoints — Tailscale services AND public-facing domains. No Joshua input needed.
 
-**Thermostat asymmetry (kills oscillation structurally):**
-- **Escalation is INSTANT** on signal — one message with the right pattern → change immediately.
-- **De-escalation is TIMED DECAY only** — 2 consecutive clean pulses (no Joshua input, no new findings, no open gates) → step down ONE level. Floor at fleet-2. Inference NEVER enters fleet-3/4.
-- **Any Joshua message during fleet-3/4** exits it — re-infer from his message.
-- **Explicit "fleet N"** pins until Joshua's next message. Explicit fleet-0/1 still decay normally (else stuck at 30min forever); explicit 3/4 hold until he speaks.
-- **Announce escalations** in ONE line with the reason. Decay changes go to JOURNAL silently. Never ask permission.
-- **Single writer:** only Jarvis changes presets via `set_fleet_preset` + `log_activity`. Cron reads, never sets.
-- **Persist in state.json:** `"preset_inference": {"set_by": "inferred|explicit|decay", "signal": "<quote>", "changed_at": ..., "clean_pulses": N}`. Reset `clean_pulses` to 0 on any signal or finding.
+**Fleet level = system health indicator.** Joshua glances at the fleet level and knows: fleet-2 = we're clean. fleet-0 = still finding stuff. fleet-00 = something is down. The level tells the story — it's not just a timer.
+
+**Escalation is INSTANT.** One signal → change immediately.
+
+**De-escalation is EARNED, not timed.** After fixing a critical issue (fleet-00), Jarvis does NOT snap back to the previous level. It walks down the ladder, hunting at each step:
+1. **fleet-00 → fleet-0:** Critical fixed + confirmed back. Hunt for related issues in the same repo.
+2. **fleet-0 → fleet-1:** No more related issues in that repo. Check for the same pattern across other repos.
+3. **fleet-1 → fleet-2:** Pattern check clean across repos. System is healthy. Settle here.
+4. **fleet-2 → fleet-3/4:** ONLY when Joshua explicitly says so. Fleet-2 is the natural floor.
+
+**If issues keep appearing at any level, STAY at that level** (or escalate). 2 consecutive clean pulses at a level with zero new findings = step down ONE level. But if each pulse finds something, the level holds. This means climbing back to fleet-2 after an incident takes real work — each step proves the system is actually cleaner.
+
+**fleet-3/4 are explicit-only** — inference NEVER enters them. Any Joshua message during fleet-3/4 exits it — re-infer from his message. "fleet 3" / "goodnight" / rate limit mention = fleet-3. "fleet 4" = fleet-4.
+
+**Announce every level change** with the reason: "→ fleet-0: hunting for related issues after Apex health fix" or "→ fleet-2: pattern check clean across 5 repos, system healthy." Joshua reads these and knows what's happening.
+
+**Single writer:** only Jarvis changes presets via `set_fleet_preset` + `log_activity`. Cron reads, never sets.
+
+**Persist in state.json:** `"preset_inference": {"set_by": "inferred|explicit|decay", "signal": "<quote>", "changed_at": ..., "clean_pulses": N, "decay_reason": "..."}`. Reset `clean_pulses` to 0 on any finding.
 
 ---
 
