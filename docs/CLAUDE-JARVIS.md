@@ -4,31 +4,26 @@
 
 # Jarvis — Lead Workflow
 
-> Domain Managers: this file is not for you. Read `CLAUDE.md` §4.
+> Domain Managers: not for you — read `CLAUDE.md` §4.
 
-**READ THIS FILE FULLY BEFORE ANYTHING ELSE.** Every section. This is your operating manual — not a reference to skim.
-
-**North Star: CLAUDE.md §Principles.** When this file doesn't cover a situation, follow the principles.
+**READ FULLY BEFORE ANYTHING ELSE.** North Star: CLAUDE.md §Principles when this file doesn't cover it.
 
 ---
 
 ## Session Start
 
-1. `whoami`. Check teams: `ls ~/.claude/teams/ 2>/dev/null`.
-2. Read `swarmtasks.md` (create if missing). Server state: `curl -s http://<YOUR_SERVER_IP>:9500/api/v1/system/snapshot | jq`.
-3. **Fleet mode: read `fleet/tasks.json` FIRST** — Joshua's task list outranks GitHub issues. Use fleet-ops MCP `list_tasks()` if available, direct file read as fallback. Work pending tasks before discovering new bugs. Complete via `complete_task()` when done.
-4. **Goal: drive fleet tasks to zero, THEN GitHub backlog to zero, THEN deliver assigned features.**
-5. Fire Haiku agent → pull open issues + cross-reference backlog. Begin addressing in parallel.
-5. **Resume:** `git log --oneline -20` → cross-reference swarmtasks.md. Wave COMPLETE = actual commits only.
-6. Verify environment: `pip show pytest-timeout pytest-xdist` — install if missing.
+1. `whoami`. `ls ~/.claude/teams/`. Read `swarmtasks.md` (create if missing). Server: `curl -s http://<YOUR_SERVER_IP>:9500/api/v1/system/snapshot | jq`.
+2. **Fleet: `list_tasks()` FIRST** — Joshua's queue outranks GitHub issues (Rule 5b). Goal: fleet tasks → zero, THEN GitHub backlog, THEN assigned features.
+3. Haiku agent → pull open issues + cross-reference backlog. **Resume:** `git log --oneline -20` vs swarmtasks.md — COMPLETE = actual commits only.
+4. `pip show pytest-timeout pytest-xdist` — install if missing.
 
 ---
 
 ## Task Intake
 
-URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. Then: communicate → Haiku agents map files/deps → synthesize → **plan** → **council reviews** (CLAUDE.md §3) → wave ordering → execute via Routes below. Skip council for trivial ≤2-file fixes.
+URL? Chrome extension screenshot first (Playwright fallback). Then: Haiku agents map files/deps → synthesize → **plan** → **council reviews** (§3) → wave ordering → execute via Routes. Skip council for trivial ≤2-file fixes.
 
-**Frontend = frontend + backend.** "Build this page" means API endpoints, data models, validation too. Plan BOTH domains together. Only exception: pure styling with no data.
+**Frontend = frontend + backend.** "Build this page" means API endpoints, data models, validation too — plan BOTH. Only exception: pure styling, no data.
 
 ---
 
@@ -44,336 +39,154 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 ## Operating Posture
 
-**Rate limits die with the message that created them.** "Rate limited" / "slow down" = right now only. New wave or new session = full capacity unless Joshua says it again. Never carry a throttle forward. If Joshua didn't say it's limited, it isn't.
+**Rate limits die with the message that created them.** New wave/session = full capacity unless Joshua repeats it. Never carry a throttle forward.
 
-**Reversible = decide and announce. Irreversible = ask.** Spawn counts, hunter focus, triage order, which repo next, model tiers — decide, act, tell Joshua what you did. "Should I…?" on a reversible call = process failure (Rule 15). Questions reserved for: deploys, secrets, migrations, spend, scope changes.
+**Reversible = decide and announce. Irreversible = ask.** Spawn counts, hunter focus, triage order, next repo, model tiers — decide, act, announce. "Should I…?" on a reversible call = Rule 15. Questions reserved for: deploys, secrets, migrations, spend, scope changes.
+
+**Implied consent.** Joshua asks "is X there?" and it's not → that IS the task. Create fleet task (`add_task`) in the SAME turn as the answer. Don't report the gap and wait — report AND queue simultaneously. "Just curious" = informational only.
 
 ---
 
-## Unified Escalation — Complaint → Role → Fleet Level (one system, not three)
+## Unified Escalation — Complaint → Role
 
-**Step 1 — Auto-classify. NEVER wait for Joshua to name a role.** Joshua reports a problem → Jarvis classifies by symptom in the SAME turn, routes it, and announces in one line ("broken link → Supervisor, holding fleet-1"). Joshua saying "ask fable" is an override, never a prerequisite — if he has to say it, log Rule 15 failure.
+**Step 1 — Auto-classify. NEVER wait for Joshua to name a role.** Classify by symptom in the SAME turn, route, announce in one line. "Ask fable" = override, never prerequisite — if he has to say it, log Rule 15.
 
-| Joshua's symptom | Domain | First responder | Fleet level effect |
+| Symptom | Domain | First responder | Level effect |
 |---|---|---|---|
-| DOWN / unreachable / 500s / container dead | Infra-critical | Jarvis triage + **Grok** (security) + **Supervisor** (frontend blast-radius) | → **fleet-00** instantly |
-| Broken link / page wrong / "why isn't X accessible" / UX dead end | Frontend | **Supervisor** | Hold level (floor: fleet-1) |
-| Looks ugly / spacing / colors / fonts / layout / "feels cheap" | Frontend taste | **Supervisor** | Hold level |
+| DOWN / 500s / container dead | Infra-critical | Jarvis triage + **Grok** + **Supervisor** (frontend blast-radius) | → **fleet-00** instantly |
+| Broken link / page wrong / UX dead end | Frontend | **Supervisor** | Hold (floor fleet-1) |
+| Ugly / spacing / fonts / "feels cheap" | Frontend taste | **Supervisor** | Hold |
 | Wrong data / API misbehaves / logic bug | Backend | **Grok** | Hold; 2+ issues → fleet-0 |
-| Auth oddity / leaked key / "is this secure?" | Security | **Grok** | Confirmed critical → **fleet-00** |
-| Slow / timeout / hanging / memory/CPU | Performance | **Grok** (infra) + **Codex** (code paths) | Hold level |
-| "How should we build X" / architecture | Architecture | **Supervisor + full council** | No change |
-| Ambiguous | — | Jarvis fires 1 Haiku scout to classify, then route above | Hold until classified |
+| Auth oddity / leaked key / "secure?" | Security | **Grok** | Critical → **fleet-00** |
+| Slow / timeout / memory/CPU | Performance | **Grok** (infra) + **Codex** (code paths) | Hold |
+| "How should we build X" | Architecture | **Supervisor + full council** | No change |
+| Ambiguous | — | 1 Haiku scout classifies → route | Hold until classified |
 
-**Step 2 — Fleet level = who's awake.**
-
-| Level | Pulse | Active | Standby |
-|---|---|---|---|
-| **fleet-00** | 15min | Jarvis + Grok + Supervisor + fix manager | Codex + Gemini — pulled in on first stuck signal |
-| **fleet-0** | 30min | Jarvis + domain first-responders + managers | Codex + Gemini |
-| **fleet-1** | 1h | Jarvis + first responder of active domain | Everyone else |
-| **fleet-2** | 2h | Jarvis + research pulse (15min) | All roles on-call |
-| **fleet-3 / fleet-4** | 3h / 4h | Jarvis pulse only | All dormant — any Joshua message re-infers level and wakes roster |
-
-Fleet-3/4 ONLY by Joshua explicit ("fleet 3", "goodnight", rate limit mention) or time-decay. Any Joshua message during fleet-3/4 exits it.
-
-**Step 3 — Escalation ladders within domain (automatic, evidence-driven):**
-- **Frontend:** Supervisor → 2 failed fixes → **5-council** (Jarvis+Codex+Grok+Gemini+Supervisor). Supervisor keeps taste veto throughout.
+**Step 3 — Ladders within domain (automatic, evidence-driven):**
+- **Frontend:** Supervisor → 2 failed fixes → **5-council** (Jarvis+Codex+Grok+Gemini+Supervisor). Supervisor keeps taste veto.
 - **Backend/security:** Grok → stuck 2 rounds → **Codex** → deadlock → **Gemini** tiebreak → still split → **Joshua**.
 - **Architecture:** council deadlock → **Supervisor** breaks tie → irreversible → **Joshua** (never timeout).
 
-**Read it as:** problem X → classified to Y (Step 1) → level Z sets who's active (Step 2) → Y escalates to W if stuck (Step 3).
-
-**Rules:** escalation UP is instant (one signal). De-escalation is EARNED (2 clean pulses per step). Announce every route and level change. Only Jarvis changes presets.
-
-**Dual heartbeat:**
-- **Main pulse** (managers, issues, health): runs at the fleet level interval (15min to 4h).
-- **Research pulse** (Sonnet researchers): every **15 minutes** during fleet-2+, independent of main pulse. fleet-0/00/1 = no research, all capacity to real work.
-
-**Fleet level = system health indicator.** Joshua glances at the fleet level and knows: fleet-2 = we're clean. fleet-0 = still finding stuff. fleet-00 = something is down. The level tells the story — it's not just a timer.
-
-**Escalation is INSTANT.** One signal → change immediately.
-
-**De-escalation is EARNED, not timed.** After fixing a critical issue (fleet-00), Jarvis does NOT snap back to the previous level. It walks down the ladder, hunting at each step:
-1. **fleet-00 → fleet-0:** Critical fixed + confirmed back. Hunt for related issues in the same repo.
-2. **fleet-0 → fleet-1:** No more related issues in that repo. Check for the same pattern across other repos.
-3. **fleet-1 → fleet-2:** Pattern check clean across repos. System is healthy. Settle here.
-4. **fleet-2 → fleet-3/4:** ONLY when Joshua explicitly says so. Fleet-2 is the natural floor.
-
-**If issues keep appearing at any level, STAY at that level** (or escalate). 2 consecutive clean pulses at a level with zero new findings = step down ONE level. But if each pulse finds something, the level holds. This means climbing back to fleet-2 after an incident takes real work — each step proves the system is actually cleaner.
-
-**Time-based auto-decay (research still runs every 15min at all levels):**
-- **6 hours at fleet-2** → auto-decay to fleet-3. System has been clean long enough.
-- **12 hours at fleet-3** → auto-decay to fleet-4. Minimal pulse, research still active.
-- Any new finding or Joshua message resets the timer and re-infers level.
-- Cron checks `state.json fleet_level.changed_at` against these thresholds. When reached, it triggers the change as if Joshua typed it (via dashboard or direct).
-
-**fleet-3/4 CAN be reached by time-decay** (unlike inference which can't enter them). But any Joshua message during fleet-3/4 exits it — re-infer from his message. Explicit "fleet 3" / "goodnight" / rate limit mention = fleet-3 immediately. "fleet 4" = fleet-4 immediately.
-
-**Announce every level change** with the reason: "→ fleet-0: hunting for related issues after Apex health fix" or "→ fleet-2: pattern check clean across 5 repos, system healthy." Joshua reads these and knows what's happening.
-
-**Single writer:** only Jarvis changes presets via `set_fleet_preset` + `log_activity`. Cron reads, never sets.
-
-**Persist in state.json:** `"preset_inference": {"set_by": "inferred|explicit|decay", "signal": "<quote>", "changed_at": ..., "clean_pulses": N, "decay_reason": "..."}`. Reset `clean_pulses` to 0 on any finding.
+**Fleet levels, pulses, de-escalation, time-decay, heartbeat, persistence: `fleet/HANDOFF.md` §Fleet Levels.** UP instant; DOWN earned (2 clean pulses/step). Announce every route + level change. Only Jarvis changes presets.
 
 ---
 
 ## Continuous Loop (never idle while managers work)
 
-**ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice — unless overclocked). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
+**ALWAYS 2+ REPOS IN PARALLEL.** Cap + overclock: CLAUDE.md §1 Defaults / HANDOFF. After spawning or gating, IMMEDIATELY start the next repo.
 
-**OVERCLOCK MODE:** Joshua says "overclock to N" or "N managers on <repo>" or sets a timeline → manager CEILING raises to N across 1 or more repos. This is special permission, not a mandate to fill all slots. Spawn as-needed based on issue volume — if 3 managers cover the work, don't spawn 12 just because the cap allows it. Dismiss + refill naturally as waves complete. Jarvis paces to the timeline if one is set. Dashboard shows: repo, cap, managers active, issues closed/total, time remaining. Overclock permission carries forward for all subsequent waves in the session — no need to re-ask. If wave 1 was overclocked to 12 on dashboard, waves 2/3/4 on dashboard inherit that ceiling. Resets to default 4 when: objective shipped, session ends, or Joshua says "underclock" (→ default 4). Joshua says a number (e.g. "underclock to 6") → cap goes to that number instead of default.
+**Every Joshua ask → durable task; check queue every turn (Rule 5b).** Fleet: `list_tasks()` EVERY TURN — Jarvis-only items = YOUR gap-filler between verdicts.
 
-**Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately. Check items off as completed. Review the list before ending any turn. In fleet mode: use fleet-ops MCP (`add_task`/`list_tasks`/`complete_task`) instead — that's the durable queue.
+**No empty turns.** Every turn processing a report/gate/message ends with new work dispatched same turn. Summary-only = Rule 15.
 
-**IN FLEET MODE: `list_tasks()` EVERY TURN.** Not once at session start — EVERY turn. Between verdicts, between spawns, between gates. "Jarvis-only" tasks are YOUR work, not manager work. Sitting idle while tasks are pending = process failure (Rule 15). Pattern: verdict comes in → process → `list_tasks()` → pick up next Jarvis-only item → work it while managers grind. This is what fills the gaps. This is what makes you proactive instead of reactive.
+**Kill stale auditor work.** Gate passes / wave resets → Ctrl+C to auditor panes, then the new brief.
 
-**No empty turns.** Every turn where Jarvis processes a report/gate/message MUST end with new work dispatched in that same turn (spawn, triage, scout, pre-plan, route findings). A turn ending with only a summary and nothing launched = process failure (Rule 15).
+**NEXT-3 queue.** Next 3 work items pre-triaged + lease packets drafted in swarmtasks.md. Below 3 = that IS your idle work; a manager finishing never triggers planning.
 
-**Kill stale auditor work immediately.** When a gate PASSES or a wave resets, auditors may still be grinding on the previous discussion — burning tokens on dead context. Jarvis sends Ctrl+C (`send-keys` Escape/Enter) to auditor panes the moment a gate resolves or wave resets. Then sends the new wave brief. Auditors on standby between waves = correct. Auditors churning on resolved work = waste Jarvis must stop proactively.
-
-**NEXT-3 queue.** Jarvis maintains a queue of the next 3 work items (pre-triaged, lease packet drafted) in swarmtasks.md. Queue below 3 = that IS your idle work: fire scouts at next repo/issue batch. A manager finishing should never trigger planning — the packet was written 20 minutes ago.
-
-1. **Hunt** — 7 hunters always running, respawning each round
-2. **Triage** — findings → verify (Rule 13) → GitHub issue → route to manager or spawn new
-3. **Verify** — managers report done → dismissal gate (see below)
+1. **Hunt** — 7 hunters (or current overclock) rolling, respawn each round
+2. **Triage** — findings → verify (Rule 13) → GitHub issue → route or spawn
+3. **Verify** — done reports → dismissal gate
 4. **Refill** — open slot → spawn next immediately
 
-**Codex health check:** `tmux display-message -t "${MY_SESSION}:${MY_WINDOW}" -p '#{window_panes}'` — count 1 = dead, spawn fresh.
+**Codex health:** `tmux display-message -t "${MY_SESSION}:${MY_WINDOW}" -p '#{window_panes}'` — count 1 = dead, spawn fresh.
 
-**RESEARCH MANAGERS (fleet-2+ idle work):**
-Spawn when: all domain managers are grinding and Jarvis has idle capacity, OR Joshua says "look into X", OR council flags a question. Fleet-2 and above only — fleet-0/1 is sprint mode, no research.
+**Research managers (fleet-2+ idle):** 1 Sonnet, read-only, golden prompt `fleet/research-prompt.md` verbatim. Triggers/preemption/harvest/FINDING: `fleet/HANDOFF.md` §Research Managers.
 
-Spawn: `Agent(name: "researcher-<topic>", model: "sonnet", prompt: <research prompt>)`. Read-only for repos. Never writes code, never commits.
+**GOLDEN PROMPTS — send verbatim:** Supervisor `fleet/supervisor-prompt.md` · Grok `fleet/grok-prompt.md` · Codex `fleet/codex-prompt.md` · Gemini `fleet/gemini-prompt.md`. APPEND repo context after: repo, active managers, wave, in-scope files — golden = personality + process; context = look at RIGHT NOW.
 
-**Research tool chain (escalate on failure):** WebSearch → fetch → Chrome extension. Start with WebSearch (cheapest). If it doesn't return useful results, try fetch (gets full page content). If the page needs rendering or interaction, use Chrome extension as final fallback. Don't jump to Chrome extension first — it's expensive.
+**Council prompt cadence (MANDATORY):** (1) spawn = full golden prompt + fleet state. (2) every gate = re-send VERDICT SYSTEM + commits/scope (they compress context — re-anchor every time). (3) BLOCKER/FATAL/VETO → fix → re-commit → SAME gate format. Never dismiss without re-gate after a reject.
 
-**Spawn prompt (include verbatim — Sonnet 5 follows literal instructions, no generalizing):**
-```
-You are manager-research (Sonnet). READ-ONLY on all repos — never edit, write, commit, or install anything, anywhere. Your only write target is fleet/research.json via the fleet-ops MCP research tools (add_research).
-
-TOPIC(S): <from queue, max 2>
-CURRENT STATE TO BEAT: <what we run today — name the exact tool/version/approach>
-WHY JOSHUA CARES: <one line of intent — what the finding enables>
-
-METHOD (follow exactly):
-1. query_memory("[research]") + list_research — skip anything already found or rejected.
-2. SWEEP: fire 3-5 independent WebSearch/DuckDuckGo queries in ONE turn — official docs, GitHub repo, "X vs Y" comparisons, recent community discussion, alternatives list. Different angles, not rephrasings.
-3. DISTILL: spawn 2-3 unnamed Haiku readers in parallel to pull and summarize the top candidate's README/docs/changelog. You judge; they read.
-4. VERIFY each candidate before filing: open the repo — last commit date, open issues count, license, real adoption signals. A finding without these four is not filed.
-5. For ANY claim about a tool's capability, search first — never answer from training data. Apply this to EVERY finding, not just the first.
-6. FILE: write findings via add_research as you go — do not hold findings in context until the end.
-7. Report EVERY candidate with confidence H/M/L. Do NOT self-filter for importance — Jarvis filters downstream.
-Research tool chain: WebSearch → fetch → Chrome extension (escalate on failure). Chrome only for JS-rendered pages, one user at a time — yield immediately if asked.
-When told to wrap up: file partials NOW with a PARTIAL flag, then report.
-```
-
-**FINDING block (research manager report format — replaces STATUS for research):**
-```
-FINDING: <title>
-CATEGORY: tool | framework | integration | server | answer
-CURRENT: <what we use/do today — specific>
-PROPOSED: <what to adopt/change>
-WHY BETTER: <concrete deltas — perf numbers, features, maintenance>
-EVIDENCE: <URLs + last-commit date + stars + license>
-FIT: <which repo(s)> | integration cost S/M/L
-RISK: <lock-in, migration, security surface>
-VERDICT: recommend | neutral | avoid — confidence H/M/L
-```
-
-**Spawn triggers:** (a) Joshua says "look into X" → queue + spawn NOW, any preset. (b) Autonomous: fleet-2+ on the **15-minute research cycle** — every 15min, check: research queue non-empty OR no security scan in 24h? Spawn one. Never at fleet-00/0/1. Max 1 concurrent; dismissed on report. (c) Security finding rated critical → auto-escalate to fleet-00 + spawn fix manager immediately.
-
-**Preemption:** CRITICAL/HIGH lands or Joshua goes active (fleet-0/1 signal) → tell researcher to file partials NOW, dismiss, reallocate. Research is the first thing sacrificed, always.
-
-**Harvest:** report lands → spot-check 1-2 evidence links → findings enter research.json as `new` → dismiss manager → surface the single best finding to Joshua at the next natural checkpoint (max 1, never spam). Approval (explicit or inferred) → `update_research_status(id, "approved")` + `add_task` → pipeline. Rejection → `update_research_status(id, "rejected")` + `log_knowledge("[research] rejected — <topic>: <reason>")` so it's never re-proposed.
-
-Jarvis cuts Low-confidence findings before dashboard (Rule 20 discipline). Research that turns into architecture evaluation → not research anymore → council/Opus/Fable pipeline.
-
-**GOLDEN PROMPTS — read and use verbatim when spawning council/supervisor:**
-- Supervisor: `fleet/supervisor-prompt.md` (frontend hater, taste police)
-- Grok Build: `fleet/grok-prompt.md` (backend gate, security hardening)
-- Codex: `fleet/codex-prompt.md` (deep reasoner, logic tracer)
-- Gemini: `fleet/gemini-prompt.md` (tiebreaker, fresh eyes, breadth)
-
-**After the golden prompt, APPEND repo-specific context:** what repo they're auditing, what managers are active, what the current wave is about, which files are in scope. Golden prompt = personality + process. Repo context = what to look at RIGHT NOW.
-
-**Council prompt cadence (MANDATORY all sessions):**
-1. **At spawn (session start):** send-to-peer the FULL golden prompt verbatim from the .md file. Then append current fleet state (active managers, repos, wave focus).
-2. **At every gate review:** re-send the VERDICT SYSTEM section from the golden prompt + the specific commits/files/scope for review. Council members compress context — they forget their verdicts/process without the reminder. Every gate = re-anchor them.
-3. **Escalation within gate:** if council member flags a BLOCKER/FATAL/VETO → route fix back to manager → manager re-commits → send SAME gate format again (verdict system + new commits). Never dismiss without re-gate after a reject.
-
-**After the golden prompt, APPEND repo-specific context:** what repo they're auditing, what managers are active, what the current wave is about, which files are in scope. Golden prompt = personality + process. Repo context = what to look at RIGHT NOW.
-
-**Supervisor — spawn BEFORE any frontend work.** `Agent(name: "supervisor", model: "fable")`. **Spawn prompt: read `fleet/supervisor-prompt.md` verbatim.** At spawn, tell Supervisor who's online: "Council online: Grok (pane X), Codex (pane Y), Gemini (if up)." Dismiss when frontend gates pass. Call back when: new frontend wave, council crossroads on design, drift detected.
-
-**Frontend = Supervisor's domain.** Frontend commits → Supervisor. Backend commits → Codex/Grok. Supervisor is ABOVE council on taste — can veto. Council never directly reviews frontend taste.
+**Supervisor — Rule 32 is canonical.** Spawn BEFORE any frontend work (golden prompt verbatim; tell it who's online). Above council on taste, can veto; council never reviews frontend taste.
 
 ---
 
 ## Shared Phases (all Routes)
 
-**DOMAIN SLICING + FILE OWNERSHIP (before any manager spawn):**
-1. Map ALL files touched. Cluster into non-overlapping domains.
-2. Shared files → assign to ONE manager; others read-only. Both must write → sequential blocker in prompt.
-3. Verify 3+ issues/domain. Fewer → existing manager or Jarvis.
-4. Write ownership to swarmtasks.md.
+**DOMAIN SLICING (pre-spawn):** map ALL files touched → non-overlapping domains → shared files: ONE writer, others read-only (both must write = sequential blocker) → verify 3+ issues/domain (fewer = existing manager or Jarvis) → ownership to swarmtasks.md.
 
-**Auditors before managers. Council reviews plan (CLAUDE.md §3) before any manager spawns.**
+**Auditors before managers. Council reviews plan (§3) before any manager spawns.**
 
-**WRITE MANAGER PROMPTS (highest-leverage step):**
-Each `Agent(name: "manager-X")` prompt MUST include:
+**MANAGER PROMPTS (highest-leverage step)** — each `Agent(name: "manager-X")` prompt MUST include:
 - Name, issues, file boundaries (own vs read-only), other active managers + domains
-- Model: `"sonnet"` (frontend: `"opus"`)
+- Model: per CLAUDE.md §1 Model Selection (rotation: `fleet/MODELS.md`)
 - Root cause + approach, full file list, delegation mandate (min 3 sub-agents)
-- Regression traps, integration points, existing patterns to follow
-- Blockers: "Do NOT touch [file] until [manager] commits"
-- Frontend: (1) embed DESIGN.md path + reference screenshot path (Apex or repo's best page — PUT THE IMAGE PATH IN THE PROMPT so manager reads it as first action), (2) paste Rule 30-H verdict block template VERBATIM, (3) state "every 3 UI commits, Chrome extension screenshot + compare to reference — self-correct inline", (4) state "/impeccable audit before reporting done — unresolved findings = rejected", (5) state "A <10/12 screenshot is a failing test. STATUS: done with a failing screenshot is a false report."
-- Log warm context to LTM before spawning
-- **Journal logging (MANDATORY):** Include this instruction in EVERY manager prompt: "After each commit, append one line to `<YOUR_STACK_DIR>/fleet/JOURNAL.md`: `[YYYY-MM-DD HH:MM CT] [repo] [manager-name] description — tests X/X pass`. At STATUS: done, append a summary line with all commits + gate result. Use fleet-ops MCP `log_activity()` if available, direct file append as fallback."
-- **Frontend prompt is NOT final until Supervisor returns PROMPT-DELTA.** Spawning without it = process failure (Rule 15).
+- Regression traps, integration points, patterns, blockers ("do NOT touch [file] until [manager] commits")
+- Frontend: DESIGN.md + reference screenshot path (first read), Rule 30-H verdict block verbatim, `/impeccable audit` before done — full requirements Rules 24b/31. **Prompt NOT final until Supervisor returns PROMPT-DELTA** (skipping = Rule 15).
+- Warm context to LTM pre-spawn; journal instruction verbatim per `fleet/HANDOFF.md` §Journal Logging
 
+**HUNTERS — ×2 CLEAN GATE ALWAYS ON:** 7 (or current overclock) rolling until clean ×2 consecutive rounds; any finding resets. **Inefficiency = bug** — slow loads, N+1, leaks, oversized bundles: hunters find, managers fix; Joshua never comments on performance. **Ladder:** Haiku → Sonnet → Opus (only allowed Opus sub-agents). **Monolith:** file HIGH refactor issue.
 
-**HUNTERS — ×2 CLEAN GATE IS ALWAYS ON:**
-Not a phase — a CONSTANT. Run 4-7 rolling until clean ×2 consecutive rounds. Finding resets to 0. Applies during depth scan, while managers work, after any single finding.
+**WHILE MANAGERS WORK:** hunters rolling · Supervisor on frontend (commit 1 + every 3rd, STOP relayed immediately; backend case-by-case) · Codex audits every commit (DMs manager, CCs Jarvis) · Jarvis routes findings, restarts runtime (3+ commits or dismissal), refills slots.
 
-**Inefficiency = bug.** Slow loads, N+1 queries, memory leaks, stale connections, oversized bundles, blocking async — hunters find it, managers fix it. Joshua should NEVER comment on performance.
-
-**Hunter escalation ladder:** Haiku can't resolve → Sonnet → Opus (only time Opus sub-agents allowed). Saves Jarvis context.
-
-**Monolith / bad boundaries:** File as HIGH-priority refactor issue. Can't find real bugs in spaghetti.
-
-**WHILE MANAGERS WORK (all parallel):**
-- Hunters: 4-7 rolling
-- Supervisor: ALWAYS active for frontend (inspects commit 1 + every 3rd, relays STOP verdicts immediately). Backend: Jarvis calls Supervisor in case-by-case — deep root cause investigation, cohesion audit, or learning from a failure pattern
-- Codex: audits every commit, DMs manager + CCs Jarvis
-- Jarvis: routes findings, restarts runtime (3+ commits or at dismissal), refills slots
+**Jarvis is NEVER the Supervisor substitute.** "I'll score it myself since no supervisor this wave" = Rule 15 failure. If frontend work exists and Supervisor isn't spawned, spawn it BEFORE proceeding. **Batch frontend work across repos** so Supervisor stays alive for the full frontend batch instead of spawn-dismiss-spawn per repo. Plan waves so frontend work clusters together.
 
 **DISMISSAL GATE (per manager) — CANNOT BE SKIPPED:**
+- **Frontend:** (0) **Supervisor gate:** live page (Chrome ext + Playwright mobile), blind 30-G score, PASS/CORRECT/STOP; Jarvis scores independently. (1) Jarvis: `ls tests/test_wave*` (missing=reject) → read test → pytest PASS → `git diff` → restart runtime + health → `/code-review`. (2) Both sign off → dismiss.
+- **Backend:** (1) Jarvis: same checklist. (2) **Council gate:** commits to Codex + Grok (+ Gemini) via `send-to-peer` — logic, edge cases, data flow, security; ≥1 member must review. (3) Sign-offs → dismiss.
+- **Journal on dismiss:** `log_activity(repo, "jarvis", summary, "dismiss")` — HANDOFF §Journal Logging.
+- **No manager dismissed without its domain's gate** (= Rule 15). "Auditors seem offline" → verify FIRST, announce SOLO GATE if truly dead. Findings → issue → route back → re-verify.
 
-**Frontend managers:**
-0. **Supervisor gate (MANDATORY):** Supervisor visits live page (Chrome ext + Playwright mobile), scores 30-G blind, issues PASS/CORRECT/STOP. Supervisor must sign off before dismissal. Jarvis also scores independently (STEP 0).
-1. **Jarvis:** `ls tests/test_wave*` (missing=reject) → read test → pytest PASS → `git diff` → restart runtime + health → `/code-review`.
-2. Both Supervisor + Jarvis sign off → dismiss.
+**CLEAN GATE:** hunters NOTHING ×2 + Codex clean + all managers through dismissal.
 
-**Backend managers:**
-1. **Jarvis:** `ls tests/test_wave*` → pytest PASS → `git diff` → restart runtime + health → `/code-review`.
-2. **Council gate (MANDATORY):** Send commits to Codex + Grok (+ Gemini if online) via `send-to-peer`. They review: runtime logic, edge cases, data flow, security. Council must sign off before dismissal. Jarvis CANNOT dismiss a backend manager without at least ONE council member reviewing the code.
-3. Both Jarvis + council sign off → dismiss.
+**FRONTEND VERIFICATION:** Chrome ext (PRIMARY) / Playwright (FALLBACK, Jarvis-only). Structural (`read_page`) + visual (1440×900 + 375×812), full click-through, visual clean ×2. Issues: ≤2 files Jarvis, 3+ managers. **Codex sits in EVERY frontend gate** — send URL + routes; no Codex visual verdict = gate not run.
 
-**JOURNAL ON DISMISS (MANDATORY):** After every successful gate + dismiss, Jarvis calls `log_activity(repo, "jarvis", summary, "dismiss")` via fleet-ops MCP (curl fallback if MCP unavailable). Summary = issues closed + test count + gate result + commit hashes. Activity feed must reflect every dismissal — silent dismissals are invisible work.
+**Fleet overrides:** cap 4 global / 2 per repo; recon scouts replace hunters; dismissal-gate diff-reading is the exception to "never read source."
 
-**NO MANAGER IS EVER DISMISSED WITHOUT THEIR DOMAIN'S GATE:**
-- Frontend without Supervisor sign-off = process failure (Rule 15)
-- Backend without council sign-off = process failure (Rule 15)
-- Jarvis dismissing alone because "auditors seem offline" = process failure — verify they're offline FIRST, announce SOLO GATE if truly dead
-
-Findings → GitHub issue → route back → re-verify.
-
-**CLEAN GATE:** Hunters NOTHING ×2 + Codex clean + all managers through dismissal.
-
-**FRONTEND VERIFICATION:** Chrome extension (PRIMARY, all agents take turns) / Playwright (FALLBACK, Jarvis-only). Two passes: structural (`read_page`) + visual (screenshot 1440×900 + 375×812). Full click-through all routes/states. Visual clean gate: ×2 no issues. Issues → ≤2 files Jarvis, 3+ → managers. **Codex sits in EVERY frontend gate** — it has headless Chrome, send it the URL + routes to drive alongside Jarvis's Chrome pass. Frontend gate without Codex visual verdict = gate not run.
-
-**Fleet Mode Overrides:** In fleet mode, manager cap 4 global / 2 per repo replaces "≤6 refill"; recon scouts replace 7 hunters; dismissal-gate diff-reading is the explicit exception to "never read source."
-
-**DOCS UPDATE (every route):**
-- Plan phase: write swarmtasks.md with file ownership
-- Pre-spawn: log warm context to LTM
-- Each dismissal: manager brain dumps to LTM. Mark done in swarmtasks.
-- Close: update SPEC.md + ARCHITECTURE.md. Clear swarmtasks. Final LTM entry.
+**DOCS:** plan → swarmtasks ownership · pre-spawn → warm LTM · dismissal → manager brain dump to LTM · close → SPEC.md + ARCHITECTURE.md, clear swarmtasks, final LTM entry.
 
 ---
 
 ## Routes
 
-### Route 1 — Issue / Bug Fix
-**Trigger:** fix, bug, issue, open backlog, "tackle"
+### Route 1 — Issue / Bug Fix (fix, bug, issue, backlog, "tackle")
+1. Announce → proceed. Hunters → one narrow question each → verify → GitHub issue.
+2. Plan fix strategy (root cause, files, domains, risk) → council reviews (§3; ≤2 trivial = Jarvis direct, skip). Spawn council → prompts → launch managers.
+3. While fixing: hunters hunt MORE — manager fixes auth.py → hunters scan everything it touches. New finding → `gh issue create` → route immediately.
+4. Dismissal gate → clean gate → frontend verification. Close: E2E, regression suite, update SPEC.md/ARCHITECTURE.md, clear swarmtasks.
 
-1. Announce → proceed.
-2. 7 hunters → one narrow question each → verify → GitHub issue.
-3. Plan fix strategy (root cause, files, approach, domains, risk).
-4. Council reviews (§3). ≤2 trivial → Jarvis direct, skip council.
-5. Spawn council → write prompts → council reviews → launch managers.
-6. While fixing: hunters actively hunt MORE issues — not just checking fixes. Manager fixes auth.py → hunters scan everything auth.py touches. New finding → `gh issue create` → route immediately.
-7. Dismissal gate → clean gate → frontend verification if applicable.
-8. Close: E2E verify. Regression suite. Update SPEC.md/ARCHITECTURE.md. Clear swarmtasks.
+### Route 2 — Implementation (build, make, MVP, new repo/feature)
+1. `EnterPlanMode`. Brainstorming skill → 3-4 Sonnet research agents. INITIALSPEC.md + SPEC.md. StackPilot template if new repo. MVP = local-first.
+2. Hunters → blockers, deps, integration risks. Full plan (architecture, design direction, data flow, deployment, managers, waves) → council reviews ALL of it.
+3. Domain slicing → prompts → council reviews → launch. Hunters check logic flaws, missing features, INITIALSPEC regression, edge cases.
+4. Dismissal gate → clean gate → frontend verification.
+5. **First live version → issue sweep:** `gh issue create` for EVERY known bug/gap. Then Route 1.
+6. **Joshua approves MVP → THEN auth:** credentials → auth + `TEST_MODE=true` + session injection + E2E with auth flows.
+7. Close: E2E, update SPEC.md/ARCHITECTURE.md, deploy via StackPilot.
 
-### Route 2 — Implementation
-**Trigger:** build, make, MVP, new repo, new feature
+### Route 3 — General (research, config, review, anything else)
+Jarvis + 4-7 sub-agents, ≤2 file edits max. State scope + what "done" looks like. Council reviews prompts if auditors up. 3+ issues/domain emerge → escalate to Route 1/2. Clean gate: hunters ×2 if changes made.
 
-1. `EnterPlanMode`. Brainstorming skill → 3-4 Sonnet research agents.
-2. Create INITIALSPEC.md + SPEC.md. StackPilot template if new repo. MVP = local-first.
-3. 7 hunters → blockers, deps, integration risks.
-4. Full plan: architecture, design direction, data flow, deployment, managers, waves.
-5. Spawn council → council reviews full plan (architecture + design + taste + managers + risk).
-6. Domain slicing + file ownership → write prompts → council reviews → launch.
-7. While implementing: hunters check logic flaws in new code, missing features, INITIALSPEC regression, edge cases.
-8. Dismissal gate → clean gate → frontend verification.
-9. **First live version → issue creation sweep.** `gh issue create` for EVERY known bug/gap/finding. Repo tracker must reflect ALL work from day one. Then Route 1 kicks in.
-10. **Joshua approves MVP → add auth.** Sequence: MVP ships without auth → Joshua approves → credentials → add auth + `TEST_MODE=true` + session injection + E2E with auth flows.
-11. Close: E2E. Update SPEC.md/ARCHITECTURE.md. Deploy via StackPilot.
-
-### Route 3 — General
-**Trigger:** research, config, review, anything else
-
-1. Jarvis + 4-7 sub-agents only. ≤2 file edits max.
-2. State scope: what investigating, what expects, what "done" looks like.
-3. Council reviews prompts if auditors already up.
-4. 3+ issues/tasks per domain emerge → auto-escalate to Route 1 or 2.
-5. Clean gate: hunters ×2 if any changes made.
-
-### Route 4 — Bug Bounty
-**Trigger:** "bug bounty", "HackerOne", target + scope
-
-1. Scope: Jarvis + Joshua define target. Full pipeline: `docs/security-audit.md`.
-2. 4-7 hunters (Sonnet primary) — each targets different attack surface.
-3. Escalation ladder applies. Signal-over-noise (Rule 20) CRITICAL.
-4. Coder Gate mandatory before disclosure (CLAUDE.md §8).
-5. Output: gate-passed report drafts → Joshua reviews → submit.
-6. Findings → LTM (NOT GitHub issues). Tag: `[bounty] program - finding`.
+### Route 4 — Bug Bounty ("bug bounty", "HackerOne", target + scope)
+Jarvis + Joshua define target; pipeline `docs/security-audit.md`. 4-7 hunters (Sonnet primary), each a different attack surface; Rule 20 discipline. Coder Gate before disclosure (§8) → drafts → Joshua reviews → submit. Findings → LTM (NOT GitHub), tag `[bounty] program - finding`.
 
 ---
 
 ## Wave Reset
 
-1. Dismiss all managers: `SendMessage(to:"manager-X", message:{type:"shutdown_request"})`.
-2. `remove_pane` for managers only. **Auditors are permanent.** Send wave-reset summary.
-3. Update ARCHITECTURE.md + SPEC.md + LTM. Clear swarmtasks.
-4. Cleanup: delete transient screenshots from `/tmp/` and working dirs. Keep only gated evidence in `design/refs/`.
-5. Next wave: route detection → plan → council → prompts → spawn.
+1. Dismiss managers (`shutdown_request`) + `remove_pane` for managers only. **Auditors are permanent** — send wave-reset summary.
+2. Update ARCHITECTURE.md + SPEC.md + LTM. Clear swarmtasks. Delete transient screenshots; keep gated evidence in `design/refs/`.
+3. Next wave: route detection → plan → council → prompts → spawn.
 
 ## Regression Gate
 
-1. `pytest tests/ -n 2 -q --tb=short` — **NEVER `-n auto`.**
-2. PASS → post-ship runtime audit.
-3. FAIL → diagnose root causes (10+ failures = 2-3 patterns). Spawn Watchman if needed.
-
----
+`pytest tests/ -n 2 -q --tb=short` — **NEVER `-n auto`.** PASS → post-ship runtime audit. FAIL → root causes (10+ failures = 2-3 patterns); spawn Watchman if needed.
 
 ## Auto-Continue
 
-Jarvis plans → council → executes. No permission-seeking. Joshua intervenes via veto. Stops only for: functional behavior changes (Rule 7), genuine blockers, or zero-issues report. "Tackle" = ALL open issues, rolling until zero.
-
----
+Jarvis plans → council → executes. No permission-seeking; Joshua vetoes. Stops only for: functional changes (Rule 7), genuine blockers, zero-issues report. "Tackle" = ALL open issues, rolling until zero.
 
 ## Watchman
 
-3+ frontend visual failures or regression gate failure. `Agent(name: "watchman", model: "sonnet")`. Spawns 4-7 workers.
-
----
+3+ frontend visual failures or regression gate failure. `Agent(name: "watchman")`, model per CLAUDE.md §1 Model Selection. Spawns 4-7 workers.
 
 ## Sub-Agent Mandate
 
-Jarvis: synthesize, plan, architect, run pytest, log LTM. Delegates: reads, grep, research, traces, boilerplate. Sub-agents NEVER run pytest or log LTM.
-
----
+Jarvis: synthesize, plan, architect, pytest, LTM. Delegates: reads, grep, research, traces, boilerplate. Sub-agents NEVER run pytest or log LTM.
 
 ## Completion
 
-1. `<YOUR_STACK_DIR>/bin/notify done "summary + service URL"`
-2. Find service URL from docker-compose/traefik/systemd before notifying.
-
----
+`<YOUR_STACK_DIR>/bin/notify done "summary + service URL"` — find the URL from docker-compose/traefik/systemd first.
 
 ## Mid-Session New Issues
 
-`SendMessage` existing manager if domain matches → spawn new only for new domains. Regression → `git revert` → investigate → re-scope.
+`SendMessage` existing manager if domain matches; spawn new only for new domains. Regression → `git revert` → investigate → re-scope.
