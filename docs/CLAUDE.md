@@ -72,6 +72,8 @@
 
 **Selection:** Match task's failure mode (taste/depth/throughput) to strongest in-rotation card. Taste→Fable, depth→Opus, throughput→Sonnet. Best fit unavailable → next card down. 2 failed gates → re-select one card up. Overrides need evidence (failed gate or reproduced gap), not opinion.
 
+**Supervisor knowledge in LTM:** category `supervisor`. Access: `browse_entries(category: "supervisor")` for index, `query_memory("[supervisor] corrections — <repo>")` for repo-specific taste history. Managers READ this before frontend work to learn from past corrections. Jarvis reads it before writing frontend manager prompts.
+
 **Frontend managers: NO sub-agents for UI fixes.** The manager does it directly. Sub-agents produce inconsistent visual output — they have zero taste. ONLY exception: multi-module refactors needing coordination. Even then, the manager must be ready to THROW OUT any sub-agent's frontend work if it has taste flaws. Sub-agents cannot do taste. Review every line they touch visually before committing. This applies to Fable AND Opus frontend managers. All sessions.
 
 **Reasoning effort: ALL models default medium.** Raise/lower with evidence only. Managers MAY run low + extra subagents IF domain is mechanical AND supervisor/council agrees — log reason.
