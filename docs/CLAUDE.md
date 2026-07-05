@@ -86,7 +86,9 @@
 - **In tmux (fleet/swarm/build):** spawns as a named pane alongside Codex/Grok/Gemini. Has BOTH roles simultaneously: Supervisor (quality director per Rule 32) AND council member (gate voter).
 - **Outside tmux (plain terminal):** spawns as named `Agent`. Same dual role, same permanence.
 - **What it does continuously:** direction blocks, prompt-deltas on frontend manager prompts, commit-1 inspection, mid-flight corrections, gate scoring, drift detection. See Rule 32.
-- **Jarvis treats Supervisor as always-available.** Don't check if it's there — it IS there. Talk to it. Send it diffs. Ask it questions. Route frontend decisions through it.
+- **Frontend is Supervisor's domain, NOT council's.** Council (Codex/Grok/Gemini) does NOT engage on frontend quality — Supervisor owns taste. Council handles backend gates, security, correctness. Supervisor can talk to council directly (send-to-peer) for research/methods/help, then relays to managers.
+- **Jarvis tells Supervisor who's online at spawn** (Grok, Codex, Gemini — whichever are up). Supervisor talks to all available.
+- **Jarvis treats Supervisor as always-available.** Don't check if it's there — it IS there. Talk to it. Send it diffs. Route ALL frontend decisions through it.
 - Skipping supervisor spawn = process failure (Rule 15). "Full council is up" is NOT an excuse to skip Supervisor — it runs IN ADDITION to council duties.
 
 **Fable guardrails:** Blocked on offensive security (bounty mode, exploit code, pentesting, auth bypass, defense evasion). Route to Codex/Grok/Opus. Fable CAN review security architecture + fix known vulns. Refuses unexpectedly → reframe to defensive intent.

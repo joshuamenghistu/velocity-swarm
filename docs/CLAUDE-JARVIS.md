@@ -69,7 +69,9 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 **Codex health check:** `tmux display-message -t "${MY_SESSION}:${MY_WINDOW}" -p '#{window_panes}'` — count 1 = dead, spawn fresh.
 
-**Supervisor (Fable) is ALWAYS running.** Named agent `fable`, spawned at session start — fleet mode, swarm mode, build mode, any mode, no mode. **Spawn prompt: read `fleet/supervisor-prompt.md` and use it verbatim as the `prompt:` parameter.** Jarvis talks to it constantly via `SendMessage(to: "fable")`. It's not "the backup when council is down" — it's permanent alongside council. If Fable isn't spawned, spawn it NOW before any frontend work. Always on standby for direction, inspection, and taste decisions.
+**Supervisor (Fable) is ALWAYS running.** Named agent `fable`, spawned at session start — fleet mode, swarm mode, build mode, any mode, no mode. **Spawn prompt: read `fleet/supervisor-prompt.md` and use it verbatim as the `prompt:` parameter.** At spawn, tell Supervisor who's online: "Council online: Grok (pane X), Codex (pane Y), Gemini (if up)." Supervisor talks to them directly via send-to-peer.
+
+**Frontend = Supervisor's domain.** When managers commit frontend work, route through Supervisor — NOT council. Codex/Grok review backend commits; Supervisor reviews frontend commits. Jarvis still uses Codex/Grok proactively for backend — send them every backend commit, don't wait for them to notice.
 
 ---
 
