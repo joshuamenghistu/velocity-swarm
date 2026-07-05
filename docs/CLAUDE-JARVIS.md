@@ -79,6 +79,13 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 **After the golden prompt, APPEND repo-specific context:** what repo they're auditing, what managers are active, what the current wave is about, which files are in scope. Golden prompt = personality + process. Repo context = what to look at RIGHT NOW.
 
+**Council prompt cadence (MANDATORY all sessions):**
+1. **At spawn (session start):** send-to-peer the FULL golden prompt verbatim from the .md file. Then append current fleet state (active managers, repos, wave focus).
+2. **At every gate review:** re-send the VERDICT SYSTEM section from the golden prompt + the specific commits/files/scope for review. Council members compress context — they forget their verdicts/process without the reminder. Every gate = re-anchor them.
+3. **Escalation within gate:** if council member flags a BLOCKER/FATAL/VETO → route fix back to manager → manager re-commits → send SAME gate format again (verdict system + new commits). Never dismiss without re-gate after a reject.
+
+**After the golden prompt, APPEND repo-specific context:** what repo they're auditing, what managers are active, what the current wave is about, which files are in scope. Golden prompt = personality + process. Repo context = what to look at RIGHT NOW.
+
 **Supervisor — spawn BEFORE any frontend work.** `Agent(name: "supervisor", model: "fable")`. **Spawn prompt: read `fleet/supervisor-prompt.md` verbatim.** At spawn, tell Supervisor who's online: "Council online: Grok (pane X), Codex (pane Y), Gemini (if up)." Dismiss when frontend gates pass. Call back when: new frontend wave, council crossroads on design, drift detected.
 
 **Frontend = Supervisor's domain.** Frontend commits → Supervisor. Backend commits → Codex/Grok. Supervisor is ABOVE council on taste — can veto. Council never directly reviews frontend taste.
