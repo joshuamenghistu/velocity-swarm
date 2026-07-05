@@ -56,11 +56,18 @@ Fleet presets scale cron frequency. Jarvis adjusts automatically based on what J
 
 | Preset | Cron | Triggers (Jarvis infers) |
 |--------|------|--------------------------|
+| **fleet-00** | 15min | AUTO-TRIGGER: health check fails (endpoint down, container dead, service unreachable) OR research finds a critical vulnerability. Covers Tailscale AND public-facing. Stays at 15min until resolved + confirmed back. |
 | **fleet-0** | 30min | Joshua calls out multiple issues in active repos, or says "back to back" / rapid multi-repo directives. Crisis/sprint mode. |
 | **fleet-1** | 1h | Joshua gives 1 repo to work on, or says "set this up", or hands over a repo to debug. Active focused work. |
 | **fleet-2** | 2h | Normal baseline. Cooling off from fleet-0. Or Jarvis finds an issue during fleet-3/4 → auto-escalate to fleet-2 to follow up. |
 | **fleet-3** | 3h | ONLY when Joshua explicitly says "fleet 3", "goodnight", mentions rate limits, or tells Jarvis to cool off. Never auto-set. |
 | **fleet-4** | 4h | ONLY when Joshua explicitly says "fleet 4". Minimal pulse. Never auto-set. |
+
+**Dual heartbeat:**
+- **Main pulse** (managers, issues, health): runs at the fleet level interval (15min to 4h).
+- **Research pulse** (Sonnet researchers): runs every **15 minutes** during fleet-2 and above, independent of the main pulse. Sonnet costs nothing — research is always on when not in crisis mode. fleet-0/00/1 = no research, all capacity to real work.
+
+**fleet-00 auto-trigger:** If ANY health check fails (Tailscale endpoint down, public-facing service unreachable, container dead) OR research finds a critical vulnerability → auto-escalate to fleet-00 (15min). Stays there until the problem is confirmed resolved + 2 consecutive clean checks. Applies to ALL monitored endpoints — Tailscale services AND public-facing domains. No Joshua input needed.
 
 **Thermostat asymmetry (kills oscillation structurally):**
 - **Escalation is INSTANT** on signal — one message with the right pattern → change immediately.
@@ -134,7 +141,7 @@ RISK: <lock-in, migration, security surface>
 VERDICT: recommend | neutral | avoid — confidence H/M/L
 ```
 
-**Spawn triggers:** (a) Joshua says "look into X" → queue + spawn NOW, any preset. (b) Autonomous: fleet-2+ AND no open CRITICAL/HIGH AND no pending gates AND research queue non-empty. Never at fleet-0/1. Max 1 concurrent; dismissed on report.
+**Spawn triggers:** (a) Joshua says "look into X" → queue + spawn NOW, any preset. (b) Autonomous: fleet-2+ on the **15-minute research cycle** — every 15min, check: research queue non-empty OR no security scan in 24h? Spawn one. Never at fleet-00/0/1. Max 1 concurrent; dismissed on report. (c) Security finding rated critical → auto-escalate to fleet-00 + spawn fix manager immediately.
 
 **Preemption:** CRITICAL/HIGH lands or Joshua goes active (fleet-0/1 signal) → tell researcher to file partials NOW, dismiss, reallocate. Research is the first thing sacrificed, always.
 

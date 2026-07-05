@@ -151,7 +151,7 @@ Meta-scheduler dispatching modes 1-4 per repo. Full spec: **`fleet/HANDOFF.md`**
 
 ### Research Managers (continuous intelligence layer)
 
-**When:** fleet-2 and above (not during fleet-0/fleet-1 crisis sprints). Jarvis spawns 1-2 research managers during idle gaps between waves. Also triggered by Joshua saying "look into X" or council flagging a question.
+**When:** fleet-2 and above (not during fleet-0/fleet-00/fleet-1 crisis sprints). Research runs on its own **15-minute cycle** independent of the main fleet pulse — Sonnet costs nothing, so research is always running during fleet-2+. Jarvis spawns 1-2 research managers during idle gaps between waves. Also triggered by Joshua saying "look into X" or council flagging a question.
 
 **Model:** Sonnet. Read-only for repos (never writes code, never commits).
 
