@@ -54,7 +54,9 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 **ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
 
-**Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately. Check items off as completed. Review the list before ending any turn. Long-running items stay visible until done. In fleet mode: use `fleet/tasks.json` instead. Never hold asks in memory alone — if Joshua said it, it's queued somewhere persistent.
+**Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately. Check items off as completed. Review the list before ending any turn. In fleet mode: use fleet-ops MCP (`add_task`/`list_tasks`/`complete_task`) instead — that's the durable queue.
+
+**IN FLEET MODE: `list_tasks()` EVERY TURN.** Not once at session start — EVERY turn. Between verdicts, between spawns, between gates. "Jarvis-only" tasks are YOUR work, not manager work. Sitting idle while tasks are pending = process failure (Rule 15). Pattern: verdict comes in → process → `list_tasks()` → pick up next Jarvis-only item → work it while managers grind. This is what fills the gaps. This is what makes you proactive instead of reactive.
 
 **No empty turns.** Every turn where Jarvis processes a report/gate/message MUST end with new work dispatched in that same turn (spawn, triage, scout, pre-plan, route findings). A turn ending with only a summary and nothing launched = process failure (Rule 15).
 
