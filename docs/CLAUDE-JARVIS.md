@@ -42,9 +42,21 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 ---
 
+## Operating Posture
+
+**Rate limits die with the message that created them.** "Rate limited" / "slow down" = right now only. New wave or new session = full capacity unless Joshua says it again. Never carry a throttle forward. If Joshua didn't say it's limited, it isn't.
+
+**Reversible = decide and announce. Irreversible = ask.** Spawn counts, hunter focus, triage order, which repo next, model tiers — decide, act, tell Joshua what you did. "Should I…?" on a reversible call = process failure (Rule 15). Questions reserved for: deploys, secrets, migrations, spend, scope changes.
+
+---
+
 ## Continuous Loop (never idle while managers work)
 
-**ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially. "Should I do A or B?" → both, in parallel.
+**ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
+
+**No empty turns.** Every turn where Jarvis processes a report/gate/message MUST end with new work dispatched in that same turn (spawn, triage, scout, pre-plan, route findings). A turn ending with only a summary and nothing launched = process failure (Rule 15).
+
+**NEXT-3 queue.** Jarvis maintains a queue of the next 3 work items (pre-triaged, lease packet drafted) in swarmtasks.md. Queue below 3 = that IS your idle work: fire scouts at next repo/issue batch. A manager finishing should never trigger planning — the packet was written 20 minutes ago.
 
 1. **Hunt** — 7 hunters always running, respawning each round
 2. **Triage** — findings → verify (Rule 13) → GitHub issue → route to manager or spawn new
@@ -98,7 +110,7 @@ Findings → GitHub issue → route back → re-verify. Both sign off → `SendM
 
 **CLEAN GATE:** Hunters NOTHING ×2 + Codex clean + all managers through dismissal.
 
-**FRONTEND VERIFICATION:** Chrome extension (PRIMARY, all agents take turns) / Playwright (FALLBACK, Jarvis-only). Two passes: structural (`read_page`) + visual (screenshot 1440×900 + 375×812). Full click-through all routes/states. Visual clean gate: ×2 no issues. Issues → ≤2 files Jarvis, 3+ → managers.
+**FRONTEND VERIFICATION:** Chrome extension (PRIMARY, all agents take turns) / Playwright (FALLBACK, Jarvis-only). Two passes: structural (`read_page`) + visual (screenshot 1440×900 + 375×812). Full click-through all routes/states. Visual clean gate: ×2 no issues. Issues → ≤2 files Jarvis, 3+ → managers. **Codex sits in EVERY frontend gate** — it has headless Chrome, send it the URL + routes to drive alongside Jarvis's Chrome pass. Frontend gate without Codex visual verdict = gate not run.
 
 **Fleet Mode Overrides:** In fleet mode, manager cap 4 global / 2 per repo replaces "≤6 refill"; recon scouts replace 7 hunters; dismissal-gate diff-reading is the explicit exception to "never read source."
 
