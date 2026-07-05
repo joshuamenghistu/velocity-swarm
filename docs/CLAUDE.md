@@ -201,6 +201,8 @@ Meta-scheduler dispatching modes 1-4 per repo. Full spec: **`fleet/HANDOFF.md`**
 
 "overclock to N" → ask which if ambiguous. Codex never included. Cap sticks for session.
 
+**Overclock mode:** Joshua says "overclock to 12" / "15 managers on dashboard" / any number above 4 → manager CEILING raises to that number across 1 or more repos. This is special permission to go above default 4 — spawn as-needed based on issue volume, not all at once. Combined with a timeline ("dashboard done by Friday"), Jarvis paces waves to hit it. Dashboard shows: repo, cap, active count, progress, time remaining. Resets to default 4 when timeline met, issues zero, or Joshua says stop.
+
 ### Terminology
 Modes: "scheduled mode"=1, "go/swarm/tackle"=2, "build/make/MVP"=3, "bounty mode"+scope=4, "fleet mode"=5.
 Agents: "hunter/worker"=unnamed, "manager/teammate"=named, "manager hunters"=named read-only.

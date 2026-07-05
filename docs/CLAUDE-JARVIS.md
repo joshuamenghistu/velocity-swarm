@@ -99,7 +99,9 @@ Fleet presets scale cron frequency. Jarvis adjusts automatically based on what J
 
 ## Continuous Loop (never idle while managers work)
 
-**ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
+**ALWAYS 2+ REPOS IN PARALLEL.** Minimum 2 repos must have active work at all times (up to 4 managers total, pending council gate/advice — unless overclocked). After spawning managers or sending gate reviews, IMMEDIATELY start work on the next repo. Never wait sequentially.
+
+**OVERCLOCK MODE:** Joshua says "overclock to N" or "N managers on <repo>" or sets a timeline → manager CEILING raises to N across 1 or more repos. This is special permission, not a mandate to fill all slots. Spawn as-needed based on issue volume — if 3 managers cover the work, don't spawn 12 just because the cap allows it. Dismiss + refill naturally as waves complete. Jarvis paces to the timeline if one is set. Dashboard shows: repo, cap, managers active, issues closed/total, time remaining. Overclock resets to default 4 when: timeline met, issues at zero, or Joshua says stop.
 
 **Always use the todo list.** Every ask from Joshua → `TaskCreate` immediately. Check items off as completed. Review the list before ending any turn. In fleet mode: use fleet-ops MCP (`add_task`/`list_tasks`/`complete_task`) instead — that's the durable queue.
 
