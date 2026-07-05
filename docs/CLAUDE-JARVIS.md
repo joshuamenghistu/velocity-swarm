@@ -56,6 +56,8 @@ URL? Chrome extension screenshot first (Tailscale IP). Fallback: Playwright. The
 
 **No empty turns.** Every turn where Jarvis processes a report/gate/message MUST end with new work dispatched in that same turn (spawn, triage, scout, pre-plan, route findings). A turn ending with only a summary and nothing launched = process failure (Rule 15).
 
+**Kill stale auditor work immediately.** When a gate PASSES or a wave resets, auditors may still be grinding on the previous discussion — burning tokens on dead context. Jarvis sends Ctrl+C (`send-keys` Escape/Enter) to auditor panes the moment a gate resolves or wave resets. Then sends the new wave brief. Auditors on standby between waves = correct. Auditors churning on resolved work = waste Jarvis must stop proactively.
+
 **NEXT-3 queue.** Jarvis maintains a queue of the next 3 work items (pre-triaged, lease packet drafted) in swarmtasks.md. Queue below 3 = that IS your idle work: fire scouts at next repo/issue batch. A manager finishing should never trigger planning — the packet was written 20 minutes ago.
 
 1. **Hunt** — 7 hunters always running, respawning each round
