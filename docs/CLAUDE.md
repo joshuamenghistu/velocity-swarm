@@ -47,7 +47,7 @@
 - **Not in tmux** (plain terminal): named agents spawn in harness only → `tmux list-panes` CANNOT see them → duplicates happen.
 - **Rule: when not in tmux, do NOT spawn named agents.** Use unnamed agents + track by agent ID via `SendMessage`. Research/advice/questions are ALWAYS unnamed regardless of context.
 
-**Fable as council/supervisor = named agent, PERMANENT (same as Codex/Grok/Gemini).** `Agent(name: "fable", model: "fable")` — spawns like a manager but is NEVER dismissed. Managers get dismissed after wave gates; Fable persists across ALL waves for the session. At the END of every wave, Jarvis verifies council is intact: `tmux list-panes` → confirm Fable + Codex + Grok + Gemini are still alive. Missing = respawn immediately. Managers dismissed ≠ council dismissed.
+**Supervisor = named agent `"supervisor"`, model fable.** NOT council — ABOVE council on frontend taste. Can veto council on design. Council = Codex + Grok + Gemini only. Supervisor spawns before frontend work, dismisses when done, called back when needed. Council can select fable model for managers — that's separate from the Supervisor role.
 
 *Named spawn fails "team file not found" → create `~/.claude/teams/session-<id>.json` + `session-<id>/config.json`.*
 
@@ -76,11 +76,16 @@
 
 **Reasoning effort: ALL models default medium.** Raise/lower with evidence only. Managers MAY run low + extra subagents IF domain is mechanical AND supervisor/council agrees — log reason.
 
-**Auditors:** Codex (gpt-5.5), Grok Build (grok-3), Gemini (gemini-3-flash-preview), Fable (Fable 5). See §Auditors.
+**Auditors (council):** Codex (gpt-5.5), Grok Build (grok-3), Gemini (gemini-3-flash-preview). See §Auditors. Fable is NOT council — it's the Supervisor (separate, higher role).
 
-### Supervisor (Fable) — PERMANENT, EVERY session, ALL modes
+### Supervisor — spawns for frontend, dismisses when done, called back when needed
 
-**The Supervisor is a permanent named agent — `Agent(name: "fable", model: "fable")` — spawned at session start and NEVER dismissed.** Not optional. Not "only when council is down." Not "only outside fleet mode." ALWAYS running, ALWAYS talked to, ALWAYS inspecting frontend work. Jarvis talks to it via `SendMessage(to: "fable")` constantly.
+**`Agent(name: "supervisor", model: "fable")`** — Higher than Jarvis on frontend taste. Higher than council on design decisions. Can VETO council on frontend/design.
+
+- **PRE-SPAWN:** Before ANY frontend building, fixing, or design work — spawn Supervisor FIRST. It must be up before the frontend manager spawns.
+- **DISMISS when frontend work is complete** and gates pass. Not permanent — comes and goes with frontend waves.
+- **CALL BACK when:** council is at a crossroads on design/taste, new frontend wave starts, drift detected, or Joshua asks.
+- Jarvis talks to it via `SendMessage(to: "supervisor")`.
 
 - **Spawn prompt:** always use `fleet/supervisor-prompt.md` verbatim. Read it, paste it as the `prompt:` parameter. Never paraphrase, never shorten — it carries the twelve corrections inline.
 - **In tmux (fleet/swarm/build):** spawns as a named pane alongside Codex/Grok/Gemini. Has BOTH roles simultaneously: Supervisor (quality director per Rule 32) AND council member (gate voter).
@@ -205,7 +210,7 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
    - **Reference screenshot as FIRST INPUT** to every frontend manager — not text describing what good looks like, the actual image (Read tool on the path). Managers diff against it, not imagine.
    - **Impeccable hook (structural enforcement):** fires on every UI file edit — cannot be forgotten or compressed. Catches mechanical slop (default palettes, spacing chaos, generic type). Missing hook = frontend work blocked. Run `npx impeccable install` if absent.
    - **Screenshot loop DURING build:** every 3 commits touching UI files, take Chrome extension screenshot + compare to reference. Self-correct mid-build, not at end-gate. `/impeccable audit` before reporting done — unresolved findings = rejected.
-   - **Token derivation (MANDATORY):** `design/tokens.*` must be DERIVED from the TASTE profile — spacing scale, type ramp, radius, motion timings as numbers. Fable authors or approves the token file before any component. A TASTE line without derived tokens = no design system.
+   - **Token derivation (MANDATORY):** `design/tokens.*` must be DERIVED from the TASTE profile — spacing scale, type ramp, radius, motion timings as numbers. Supervisor authors or approves the token file before any component. A TASTE line without derived tokens = no design system.
    - All components consume tokens ONLY. Anti-repetition: log to LTM, differentiate across repos.
 25. **Capture every Joshua ask as a fleet task.** When Joshua says "do this", "add that", "why isn't X", or drops any idea/complaint — immediately `add_task` via fleet-ops MCP (or write to `fleet/tasks.json` if MCP unavailable). Don't hold it in memory, don't defer to "later" — capture it NOW. Tasks survive sessions via the durable file + stop hook + cron. Check `list_tasks` at session start. Complete tasks with `complete_task` when done. Joshua says it once, never repeats.
 26. **New repos use StackPilot template.** `gh repo create joshuamenghistu/<name> --template joshuamenghistu/stackpilot-template --private --clone`. Frontend repos: verify `ls .claude/skills/impeccable` before first commit. **Public mirrors of private repos require sanitization before push (strip IPs, tokens, internal URLs) — auto-sanitizer at `bin/sync-velocity-swarm`, git post-commit hook on stack repo.**
@@ -221,7 +226,7 @@ Gates: "trio"/"quad"=gate mode this wave, "+for all sesh"=sticky. "waves"=parall
    - **30-E · Dark-first.** Layered dark ramp, desaturated accents, elevation by lightness. Max one gradient per view. Micro-interactions 150-250ms. Light mode only if audience demands.
    - **30-F · Slop check (Jarvis + council gate — NOT the frontend manager).** The frontend manager NEVER scores its own taste. At dismissal:
      - **Jarvis:** Chrome extension → visits live page → scores rubric independently
-     - **Fable (council):** Chrome extension → visits live page → scores independently
+     - **Supervisor:** Chrome extension → visits live page → scores independently (has veto on taste)
      - **Codex:** code audit + can use headless Chrome for frontend review
      - **Gemini:** code audit (no browser tooling yet)
      - **Grok:** code audit only (no eyes yet)
@@ -328,29 +333,19 @@ Naming: `[domain] #issue - description`. Research chain: LTM → WebSearch → D
 
 ## 6. Reference
 
-### Auditors (Codex, Grok, Gemini, Fable)
+### Auditors (Codex, Grok, Gemini) — Council only, Supervisor is separate
 
 **All auditors: permanent per session, never killed between waves.** Spawned at session start. Accumulate context across waves — get "wave reset" summaries. Only killed when Joshua says stop.
 
-**Codex, Grok, and Gemini are tmux-based CLI agents — they do NOT have MCP access.** They work via their own CLIs and sub-agents. Only Fable (Claude agent) has MCP tools including Chrome extension.
+**Codex, Grok, and Gemini are tmux-based CLI agents — they do NOT have MCP access.** They work via their own CLIs and sub-agents. Supervisor (model: fable) is a Claude agent with full MCP + Chrome extension access — but it's NOT in this table, it's its own role (see §Supervisor above).
 
 | Auditor | Spawn | Config | Quirks |
 |---------|-------|--------|--------|
 | **Codex** | `codex` in tmux | `~/.codex/config.toml`: `approval_policy="never"`, `sandbox_mode="danger-full-access"` | 4-7 sub-agents (gpt-5.4-mini). Gates ALL dismissals. Can use headless Chrome for frontend audit. |
 | **Grok** | `grok --always-approve` | `~/.grok/config.toml`: `yolo=true` | 3-5 sub-agents. Independent angle from Codex. No browser tooling yet. |
 | **Gemini** | `gemini --yolo --skip-trust` | `~/.gemini/settings.json`: `"approvalMode":"yolo"` | 3-5 sub-agents. Shell blocks `$()` — MUST use `send-to-peer`. |
-| **Fable** | Named `Agent` (Claude) | Fable 5 model | Architecture court, design gate (Rule 30), tiebreaker, repo admission. NOT per-commit. Can use Chrome extension. |
 
-**NEVER spawn duplicate auditors — HARD BLOCKER (Jarvis violation pattern: spawns "1 Fable" without checking, creates duplicates).** Before spawning ANY auditor, Jarvis MUST run these checks FIRST — no exceptions, no skipping:
-```bash
-# Check for existing Fable (Claude agent):
-# Look in ALL workstreams — fable is shared across work/work2/work3
-tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_start_command}' | grep -i 'fable\|agent.*fable'
-# Check for existing Codex/Grok/Gemini (tmux processes):
-tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_start_command}' | grep -iE 'codex|grok|gemini'
-```
-**Found = talk to existing one (`SendMessage` for Fable, `send-to-peer` for tmux agents). NOT found = spawn ONE fresh.**
-Fable MUST be named `fable` — not `fable-council`, `fable-1`, `fable-2`. One name, one agent, one session. Workstreams share auditors — never spawn per-workstream copies. Spawning without running the check above = Jarvis process failure (Rule 15).
+**No duplicate auditors or supervisor.** Before spawning, `tmux list-panes -a` grep for Codex/Grok/Gemini. For Supervisor: try `SendMessage(to: "supervisor")` — if it delivers, it's alive. Found = talk to it. Not found = spawn ONE fresh. Supervisor MUST be named `supervisor`. Council = Codex + Grok + Gemini only. Spawning without checking = Rule 15 failure.
 
 **No duplicate auditors.** Before spawning or claiming counts: `tmux list-panes -a` grep for the agent. Found = talk to it. Not found = spawn ONE. Claiming counts without checking = Rule 15 failure.
 
