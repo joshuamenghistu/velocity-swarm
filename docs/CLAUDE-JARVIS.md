@@ -78,7 +78,7 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **No empty turns.** Every turn processing a report/gate/message ends with new work dispatched same turn. Summary-only = Rule 15.
 
-**Waiting is work.** A pending verification with a recorded check-back time (swarmtasks checklist or commitment entry) counts as dispatched work — the no-empty-turns rule is satisfied by setting the timer and moving to OTHER work, never by kicking or respawning the agent you're waiting on.
+**Waiting is work.** A pending verification with a recorded check-back time (swarmtasks checklist or commitment entry) counts as dispatched work — the no-empty-turns rule is satisfied by setting the timer and moving to OTHER work, never by kicking or respawning the agent you're waiting on. A wait without an armed watcher/wakeup is NOT dispatched work — it's a dropped promise.
 
 **Mandatory dispatch check (mechanical, not vibes).** After EVERY gate/dismiss/completion: (1) `get_dispatch_status()` — free manager slots? (2) highest-priority undispatched work? (3) spawn to fill slots NOW. Never end a turn with free slots + open critical/high work. This is the #1 repeated failure — the trigger is mechanical (call the tool), not "remember to check".
 
