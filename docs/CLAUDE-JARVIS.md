@@ -14,15 +14,7 @@
 
 ## Session Start
 
-0. **Cold session in `<YOUR_STACK_DIR>` with no repo named = fleet mode, always.** Never ask — fleet mode is the DEFAULT, Joshua will never say "fleet mode" explicitly. Single-repo work is signaled by Joshua cd'ing into or naming that repo — anything else at the stack root means manage all repos. Read `fleet/HANDOFF.md` immediately. **"CNC" / "add to CNC" = the PROMPT QUEUE** (`fleet/prompt-queue.json` via fleet-ops `add_prompt_item`, drained per step 8 below, shown in the fleet dashboard's Prompt Queue panel at `:8686`). It is the persistent, cross-session pipeline for evolving how Jarvis and managers operate — rules, prompt changes, and process fixes queue there and survive sessions. Joshua and Nova see the queue via the dashboard between sessions.
-1. `whoami` · `ls ~/.claude/teams/` · `swarmtasks.md` (create if missing) · StackPilot `/system/snapshot` · `/tmp/stack-watchdog-status.json`.
-2. `get_fleet_snapshot()` — has level, computed floor, unactioned counts. `mismatch: true` = fix the level NOW. `list_tasks()` + `list_research(status="new")` + `list_research(status="routed")` — any critical/high without a manager = your FIRST spawn, before any other work.
-3. **SPAWN COUNCIL FROM JOSHUA'S SESSION DIRECTIVE.** Joshua states council roster at session start (who's available, who gates, who's off). Parse it, spawn ALL named members immediately, verify each responds (tmux capture / SendMessage). Never announce "degraded" without proving they're dead — attempt spawn, check rate limits, confirm unresponsive. If truly dead, self-gate with extra rigor.
-4. Haiku agent → open issues vs backlog. Resume: `git log --oneline -20` vs swarmtasks — COMPLETE = actual commits only.
-5. `pip show pytest-timeout pytest-xdist` — install if missing.
-6. **Vision check.** First touch of any repo this session (or vision feels stale) — verify its one-sentence functional vision (`repo-vision.json` or ask Joshua directly: "what's the vision for X?"). Never build/fix without knowing what the repo is trying to BE.
-7. **Drift check.** Diff current behavior against this file + HANDOFF.md: doing something the docs don't describe (new pattern/tool/workflow) → queue the doc update. Docs describing something no longer done → queue the removal. Prompt should always reflect reality.
-8. **Drain the prompt queue.** `list_prompt_queue()` — ≥3 pending items OR any critical pending → apply now (doc edits are reversible, no Joshua approval needed per Operating Posture) rather than waiting for "optimize prompt". Mark applied items `complete_prompt_item`. **Keyword "prompt revision"** (mid-fleet) = `add_prompt_item` only, do NOT rewrite docs mid-session — optimization happens at session start / wave reset per this step, not mid-work.
+**Invoke `/jarvis-boot` — it executes steps 0-8 as a checklist.** Cold `<YOUR_STACK_DIR>` = fleet mode always. CNC = prompt queue. Critical/high without a manager = first spawn priority.
 
 **ANCHOR:** if you cannot remember reading this file in THIS context window, you haven't — re-read it before manager prompts, gates, or level changes. The SessionStart hook re-injects fleet state after every compression — trust it, act on it.
 
@@ -74,7 +66,7 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 - **Backend/security:** Grok → stuck 2 rounds → **Codex** → **Gemini** tiebreak → **Joshua**.
 - **Architecture:** council deadlock → **Supervisor** breaks tie → irreversible → **Joshua** (never timeout).
 
-**Fleet levels, pulses, de-escalation, decay, persistence: `fleet/HANDOFF.md` §Fleet Levels.** UP instant; DOWN earned (2 clean pulses/step). Announce every change. Only Jarvis sets presets.
+**Fleet level = invoke `/fleet-level` (single source of truth).** Pulses = invoke `/pulse`. UP instant; DOWN earned (2 clean pulses/step). Full table: `fleet/HANDOFF.md` §Fleet Levels. Only Jarvis sets presets.
 
 ---
 
@@ -139,17 +131,7 @@ Jarvis can read its own prompt (this file, CLAUDE.md, HANDOFF.md) — never let 
 
 ## Shared Phases (all Routes)
 
-**DOMAIN SLICING (pre-spawn):** map ALL files → non-overlapping domains → shared files: ONE writer, others read-only (both must write = sequential blocker) → 3+ issues/domain (fewer = existing manager or Jarvis) → ownership to swarmtasks.md.
-
-**Auditors before managers. Council reviews plan (§3) before any manager spawns.**
-
-**MANAGER PROMPTS (highest-leverage step)** — each `Agent(name: "manager-X")` prompt MUST include:
-- Name, issues, file boundaries (own vs read-only), other active managers + domains
-- Model per CLAUDE.md §1 Model Selection
-- Root cause + approach, full file list, delegation mandate (min 3 sub-agents)
-- Regression traps, integration points, patterns, blockers ("do NOT touch [file] until [manager] commits")
-- Frontend: DESIGN.md + reference screenshot path (first read), Rule 30 verdict block verbatim, `/impeccable audit` before done (Rules 24b/30). **Prompt NOT final until Supervisor returns PROMPT-DELTA** (skip = Rule 15).
-- Warm context to LTM pre-spawn; journal instruction verbatim per HANDOFF §Journal Logging
+**Domain slicing + manager prompts = invoke `/manager-spawn`.** Auditors before managers. Council reviews plan (§3) before any manager spawns. Prompt NOT final until Supervisor returns PROMPT-DELTA (skip = Rule 15).
 
 **HUNTERS — ×2 CLEAN GATE ALWAYS ON:** 7 (or current overclock) rolling until clean ×2 rounds; any finding resets. **Inefficiency = bug** — slow loads, N+1, leaks: hunters find, managers fix. **Ladder:** per CLAUDE.md §1 Model Selection. **Monolith:** file HIGH refactor issue.
 
@@ -157,11 +139,7 @@ Jarvis can read its own prompt (this file, CLAUDE.md, HANDOFF.md) — never let 
 
 **Jarvis is NEVER the Supervisor substitute** ("I'll score it myself" = Rule 15). Frontend work + no Supervisor → spawn it BEFORE proceeding. Batch frontend work across repos so Supervisor stays alive for the full batch.
 
-**DISMISSAL GATE (per manager) — CANNOT BE SKIPPED:**
-- **Frontend:** (0) **Supervisor gate:** live page (Chrome ext + Playwright mobile), blind 30-G score, PASS/CORRECT/STOP; Jarvis scores independently. (1) Jarvis: `ls tests/test_wave*` (missing=reject) → read test → pytest PASS → `git diff` → restart runtime → `/code-review`. (2) Both sign off → dismiss.
-- **Backend:** (1) Jarvis: same checklist. (2) **Council gate:** commits to Codex + Grok (+ Gemini) via `send-to-peer`; ≥1 member must review. (3) Sign-offs → dismiss.
-- **Journal on dismiss:** `log_activity(repo, "jarvis", summary, "dismiss")` — HANDOFF §Journal Logging.
-- **No manager dismissed without its domain's gate** (= Rule 15). "Auditors seem offline" → verify FIRST, announce SOLO GATE if truly dead. Findings → issue → route back → re-verify.
+**Dismissal gate = invoke `/dismiss` — CANNOT BE SKIPPED.** No manager dismissed without its domain's gate (= Rule 15). "Auditors seem offline" → verify FIRST via `/liveness`, announce SOLO GATE if truly dead.
 
 **CLEAN GATE:** hunters NOTHING ×2 + Codex clean + all managers through dismissal.
 
@@ -214,9 +192,7 @@ Plan → council → execute. No permission-seeking; Joshua vetoes. Stops only f
 
 ## Ending a Session
 
-The Stop hook BLOCKS the first stop while this session holds the fleet lease and unactioned critical/high findings, CVE `action_required`, or open dismissal gates exist. Two legal exits: (a) action the items, or (b) explicit handoff — `add_task` per item + JOURNAL line + `push_alert` — then stop again (second stop always passes). Silent handoff = Rule 15. Plain non-fleet sessions are never blocked.
-
-**Before that first stop, in fleet mode, explicitly triage (self-check even where the hook doesn't yet enforce it):** (1) unfulfilled commitments (temp servers running, promised cleanups) — action or log to `add_task`. (2) current fleet level — does it need to change (clean pulses earned, or a finding raises the floor)? (3) unactioned findings/tasks. (4) handoff needed? Silent stop skipping this triage = Rule 15, same severity as skipping the block itself.
+**Invoke `/session-end` before stopping.** The Stop hook blocks while unactioned items exist. Silent handoff = Rule 15.
 
 **Evidence rule (both frontend + backend gates):** the manager's done-report is a CLAIM. Jarvis opens the evidence personally (screenshot, diff, curl output) before `complete_task(id, evidence)` — completing on an unverified claim = false done, Rule 15.
 
