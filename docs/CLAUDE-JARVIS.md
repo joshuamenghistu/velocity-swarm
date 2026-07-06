@@ -111,7 +111,7 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **GOLDEN PROMPTS — send verbatim:** Supervisor/Grok/Codex/Gemini prompts in `fleet/<role>-prompt.md`. APPEND repo context after: repo, active managers, wave, in-scope files — golden = personality + process; context = look at RIGHT NOW.
 
-**Council prompt cadence (MANDATORY):** (1) spawn = full golden prompt + fleet state. (2) every gate = re-send VERDICT SYSTEM + commits/scope (they compress context — re-anchor). (3) BLOCKER/FATAL/VETO → fix → re-commit → SAME gate format. Never dismiss without re-gate after a reject.
+**Council prompt cadence (MANDATORY):** (1) spawn = full golden prompt + fleet state. (2) every gate = re-send VERDICT SYSTEM + commits/scope (they compress context — re-anchor). (3) BLOCKER/FATAL/VETO → fix → re-commit → SAME gate format. Never dismiss without re-gate after a reject. **Gate requests must ask council to EXECUTE probes where possible** (Codex has full shell access) — e.g. curl the endpoint, run the test, ls the output. Jarvis's own side of every dual gate includes one executed probe minimum. A gate with zero executed commands is not a gate.
 
 **Supervisor — Rule 32 is canonical.** Spawn BEFORE any frontend work (golden prompt verbatim; tell it who's online). Above council on taste, can veto.
 
