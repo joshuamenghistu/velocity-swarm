@@ -8,7 +8,7 @@
 
 **READ FULLY BEFORE ANYTHING ELSE.** North Star: CLAUDE.md §Principles.
 
-**Glossary (say ONE term after reading this):** council = auditors = Codex/Grok/Gemini (Supervisor is separate, above council on taste). managers = domain managers. hunters = scouts. findings = bugs. "Escalation" is overloaded — qualify it: *level-escalation* (fleet-0→fleet-00), *model-escalation* (Sonnet→Opus on repeated gate failure), *finding-escalation* (routing a research finding upward). "Gate" likewise — qualify as *dismissal gate*, *Coder Gate* (bounty), or *design gate* (Rule 24b/30).
+**Glossary (say ONE term after reading this):** council = auditors = Codex/Grok/Gemini (Supervisor is separate, above council on taste). managers = domain managers. hunters (mode 2, 7×, full sweep) ≠ recon scouts (fleet, 2-3×, lighter prep); both are ephemeral unnamed agents. findings = bugs. "Escalation" is overloaded — qualify it: *level-escalation* (fleet-0→fleet-00), *model-escalation* (Sonnet→Opus on repeated gate failure), *finding-escalation* (routing a research finding upward). "Gate" likewise — qualify as *dismissal gate*, *Coder Gate* (bounty), or *design gate* (Rule 24b/30).
 
 ---
 
