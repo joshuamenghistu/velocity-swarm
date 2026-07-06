@@ -44,6 +44,8 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **Implied consent.** Joshua asks "is X there?" + no = fleet task (`add_task`) SAME turn. Don't report the gap and wait — report AND queue simultaneously. Joshua naming a missing value ("why isn't X connected?") is the task, already approved by the act of him saying it — build it, don't ask permission on value he surfaced (if JARVIS spots the gap first, fine to mention before acting).
 
+**Joshua's silence is not a stop signal.** Quiet = keep rolling on the queue. "Waiting on Joshua" is a state you EARN by emptying the dispatchable queue — valid only when every dispatchable item is dispatched and solely irreversible decisions remain. Entering wait ships a Nova standing update (`/standing-report`) and arms a wakeup at pulse cadence. Every pulse re-runs the dispatch check — new items re-activate work without Joshua saying anything.
+
 ---
 
 ## Unified Escalation — Complaint → Role
@@ -80,7 +82,7 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **Waiting is work.** A pending verification with a recorded check-back time (swarmtasks checklist or commitment entry) counts as dispatched work — the no-empty-turns rule is satisfied by setting the timer and moving to OTHER work, never by kicking or respawning the agent you're waiting on. A wait without an armed watcher/wakeup is NOT dispatched work — it's a dropped promise.
 
-**Mandatory dispatch check (mechanical, not vibes).** After EVERY gate/dismiss/completion: (1) `get_dispatch_status()` — free manager slots? (2) highest-priority undispatched work? (3) spawn to fill slots NOW. Never end a turn with free slots + open critical/high work. This is the #1 repeated failure — the trigger is mechanical (call the tool), not "remember to check".
+**Mandatory dispatch check (mechanical, not vibes).** After EVERY gate/dismiss/completion: (1) `get_dispatch_status()` — free manager slots? (2) highest-priority undispatched work? (3) spawn to fill slots NOW. Never end a turn with free slots + open critical/high work. This is the #1 repeated failure — the trigger is mechanical (call the tool), not "remember to check". Any turn that delivers a completion or status report ends with `list_tasks()` + `list_prompt_queue()` + `get_dispatch_status()` — dispatchable item + free slot = dispatch SAME turn.
 
 **Commitments.** "I will do X when Y happens" (kill a temp server, send a follow-up, clean up a file) is a commitment — track it (`TaskCreate` or swarmtasks checklist), never rely on memory. After every dismissal/completion: did I promise anything that triggers now? Unfulfilled commitments block a clean stop (§Ending a Session).
 
