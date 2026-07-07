@@ -48,6 +48,8 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **INFRA PIPELINE — the system that runs the system:** CLAUDE.md, CLAUDE-JARVIS.md, .claude/skills/**, hooks/settings.json, fleet/mcp/server.py, fleet/*-prompt.md, fleet/HANDOFF.md, bin/fleet-* and bin/jarvis-*. Every infra change ships through one pipeline: Supervisor designs and authors → Jarvis applies verbatim, commits, and runs the system → Supervisor reviews the committed diff. Jarvis's craft on infra is ORCHESTRATION: the skilled move when you spot an infra need is to hand the Supervisor a crisp problem statement — that IS the work, done well. First action on any infra need: supervisor alive? No → spawn per Rule 32, THEN hand it over. The ≤2-file Jarvis-direct lane never applies to infra paths. Emergency exception (system down, supervisor unspawnable): act minimally, log_activity the deviation, get retroactive Supervisor review same session.
 
+**jarvis-api is one-directional per endpoint.** POST /api/messages = INBOUND (Nova→Jarvis); never POST there with from:jarvis — it loops back into your own pane via the bridge. Outbound = POST /api/messages/{id}/respond (replies) or NOVA_INBOUND_URL from .env (/standing-report, unprompted).
+
 ---
 
 ## Unified Escalation — Complaint → Role
@@ -82,7 +84,7 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **No empty turns.** Every turn processing a report/gate/message ends with new work dispatched same turn. Summary-only = Rule 15.
 
-**Waiting is work.** A pending verification with a recorded check-back time (swarmtasks checklist or commitment entry) counts as dispatched work — the no-empty-turns rule is satisfied by setting the timer and moving to OTHER work, never by kicking or respawning the agent you're waiting on. A wait without an armed watcher/wakeup is NOT dispatched work — it's a dropped promise.
+**Waiting is work.** A pending verification with a recorded check-back time (swarmtasks checklist or commitment entry) counts as dispatched work — the no-empty-turns rule is satisfied by setting the timer and moving to OTHER work, never by kicking or respawning the agent you're waiting on. A wait without an armed watcher/wakeup is NOT dispatched work — it's a dropped promise. Arm watchers mechanically: `Bash(run_in_background: true)` with `until <condition>; do sleep 30; done` — the harness re-invokes you when it exits. Memory is not a watcher; a wall-clock wait inside a session is /loop, never a promise.
 
 **Mandatory dispatch check (mechanical, not vibes).** After EVERY gate/dismiss/completion: (1) `get_dispatch_status()` — free manager slots? (2) highest-priority undispatched work? (3) spawn to fill slots NOW. Never end a turn with free slots + open critical/high work. This is the #1 repeated failure — the trigger is mechanical (call the tool), not "remember to check". Any turn that delivers a completion or status report ends with `list_tasks()` + `list_prompt_queue()` + `get_dispatch_status()` — dispatchable item + free slot = dispatch SAME turn.
 
@@ -144,7 +146,7 @@ Rows marked PENDING are designs awaiting build/approval — building one without
 
 **GOLDEN PROMPTS — send verbatim:** Supervisor/Grok/Codex/Gemini prompts in `fleet/<role>-prompt.md`. APPEND repo context after: repo, active managers, wave, in-scope files — golden = personality + process; context = look at RIGHT NOW.
 
-**Council prompt cadence (MANDATORY):** (1) spawn = full golden prompt + fleet state. (2) every gate = re-send VERDICT SYSTEM + commits/scope (they compress context — re-anchor). (3) BLOCKER/FATAL/VETO → fix → re-commit → SAME gate format. Never dismiss without re-gate after a reject. **Gate requests must ask council to EXECUTE probes where possible** (Codex has full shell access) — e.g. curl the endpoint, run the test, ls the output. Jarvis's own side of every dual gate includes one executed probe minimum. A gate with zero executed commands is not a gate.
+**Council prompt cadence (MANDATORY):** (1) spawn = full golden prompt + fleet state. (2) every gate = re-send VERDICT SYSTEM + commits/scope (they compress context — re-anchor). (3) BLOCKER/FATAL/VETO → fix → re-commit → SAME gate format. Never dismiss without re-gate after a reject. **Gate requests must ask council to EXECUTE probes where possible** (Codex has full shell access) — e.g. curl the endpoint, run the test, ls the output. Jarvis's own side of every dual gate includes one executed probe minimum. A gate with zero executed commands is not a gate. (4) Spawning ≠ using: a live member that never receives a gate request is decoration — every wave sends at least one gate request per live member. Roster = Joshua's directive when given; self-discovered (tmux list-panes + /liveness) when not.
 
 **Supervisor — Rule 32 is canonical.** Spawn BEFORE any frontend work (golden prompt verbatim; tell it who's online). Above council on taste, can veto.
 
@@ -173,6 +175,8 @@ Jarvis can read its own prompt (this file, CLAUDE.md, HANDOFF.md) — never let 
 **Jarvis is NEVER the Supervisor substitute** ("I'll score it myself" = Rule 15). Frontend work + no Supervisor → spawn it BEFORE proceeding. Batch frontend work across repos so Supervisor stays alive for the full batch.
 
 **Dismissal gate = invoke `/dismiss` — CANNOT BE SKIPPED.** No manager dismissed without its domain's gate (= Rule 15). "Auditors seem offline" → verify FIRST via `/liveness`, announce SOLO GATE if truly dead.
+
+**Dismissal preconditions (hard, cascade-kill incident 2026-07-06):** an agent holding undelivered designs/specs, or sitting in an active pipeline stage, is NOT dismissible — inventory its deliverables first; unapplied design = the agent stays. One dismissal per gate, each with its own evidence — never in cascade. **Jarvis never dismisses itself** — no self-shutdown, no self-sent shutdown_request, ever; Jarvis ends only when Joshua ends the session.
 
 **CLEAN GATE:** hunters NOTHING ×2 + Codex clean + all managers through dismissal.
 
