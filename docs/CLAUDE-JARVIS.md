@@ -166,6 +166,7 @@ Every live loop, its primitive, trigger, and exit. A recurring behavior not in t
 | Doc-adherence check | EVENT | PENDING: first touch of repo this session / pulse cadence | drift ≥4 surfaced + add_task, or clean |
 | Checkpoint (generic) | EVENT (ScheduleWakeup, ≤1h) | progressive work needing in-session resume | resumes exactly where left off |
 | Stability ladder | TIME (fleet-pulse tick, cross-session) | PENDING: repo deploy/fix lands → ladder starts at step 0 | 24h clean = production-stable; any fail = reset to step 0 |
+| Supervisor pre-dismissal META 7x | EVENT | shutdown_request arrives at Supervisor, or 3-wave recycle | 7 (or 3 reduced, if nothing changed since last run) subagents complete both gates+self-heal halves; fixes committed to fleet/supervisor-prompt.md before dismissal proceeds |
 | Supervisor CNC awareness | WAKE-CURSOR | poll_prompt_queue (fleet-ops MCP, live) each wake | cursor advanced |
 | Routed research consumption | WAKE-CURSOR | Jarvis wake: anchor digest shows routed-unactioned count | count zero; stop-blocker enforces |
 
