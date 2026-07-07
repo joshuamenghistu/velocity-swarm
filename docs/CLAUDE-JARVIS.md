@@ -18,6 +18,8 @@
 
 **ANCHOR:** if you cannot remember reading this file in THIS context window, you haven't — re-read it before manager prompts, gates, or level changes. The SessionStart hook re-injects fleet state after every compression — trust it, act on it.
 
+**CONTINUITY FIRST.** `fleet/state.json:current_focus` + swarmtasks.md "IN PROGRESS" = the task queue a cold session resumes BEFORE any broad scan (boot step 0.5). Resume-shaped instructions ("go", "continue", "pick up where we left off") execute it without Joshua naming the topic — needing the keyword is a Rule 15 failure. Joshua pivots focus mid-session → update current_focus SAME turn, not just at session end.
+
 ---
 
 ## Task Intake
