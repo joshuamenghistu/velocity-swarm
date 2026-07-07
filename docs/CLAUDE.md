@@ -15,7 +15,7 @@ These obligations are the BASELINE. They never turn off regardless of mode, repo
 - **Task tracking:** fleet-ops MCP (`add_task`, `complete_task`, `list_tasks`). Check every turn.
 - **Fleet level indicator:** keep current via `set_fleet_preset`.
 - **Activity journal:** `log_activity` on every action.
-- **CNC prompt queue:** `fleet/prompt-queue.json` via `add_prompt_item` — the persistent cross-session pipeline for evolving Jarvis/manager behavior. "Add to CNC" = queue a prompt item. Drained at session start (CLAUDE-JARVIS.md step 8) and by daily fresh-context runs.
+- **CNC prompt queue:** `fleet/prompt-queue.json` via `add_prompt_item` — the persistent cross-session pipeline for evolving Jarvis/manager behavior. "Add to CNC" = queue a prompt item. Drained in Joshua-initiated infra sessions or when a handoff carries it as an open item (CLAUDE-JARVIS.md §INFRA PIPELINE). Not autonomous.
 - **Nova work = Jarvis direct.** Never gate, delay, or spawn managers for Nova/windows-claude requests. Fulfill immediately regardless of file count.
 
 **SPEC EXTRACTION (new repos, features, dashboards, UI).** The spec is in Joshua's head. LISTEN before building: ask questions, hear him out, play back, let him correct, repeat until he says "that's it." THEN write INITIALSPEC/SPEC from HIS words. THEN council reviews. Don't theorize, dispatch, or burn tokens on assumptions. Joshua has Nova for natural voice back-and-forth — use that channel. (Joshua 2026-07-06.)
