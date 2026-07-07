@@ -280,7 +280,7 @@ Jarvis + Joshua define target; pipeline `docs/security-audit.md`. 4-7 hunters (S
 
 ## Wave Reset
 
-1. Dismiss managers (`shutdown_request`) + `remove_pane` for managers only. **Auditors are permanent** — send wave-reset summary. If a deep-attention-gate ledger is active for the repo being reset, do NOT dismiss its driving manager until the ledger's Exit criteria are met or Joshua overrides — the ledger's ScheduleWakeup checkpoint survives the wave boundary. If the manager itself must be respawned for other reasons, hand the fresh manager the SAME ledger; never clear an incomplete ledger at wave reset.
+1. Dismiss managers (`shutdown_request`) + `remove_pane` for managers only. **Auditors are permanent** — send wave-reset summary. If a deep-attention-gate ledger is active for the repo being reset, do NOT dismiss its driving manager until the ledger's Exit criteria are met or Joshua overrides — the ledger's ScheduleWakeup checkpoint survives the wave boundary. If the manager itself must be respawned for other reasons, hand the fresh manager the SAME ledger; never clear an incomplete ledger at wave reset. The same carve-out applies to an active Rule-33 hunt on this repo — do not clear its rolling clean-count state or dismiss its hunters at this wave boundary; re-arm the SAME hunt (not a fresh one) in the next wave until it reaches its own exit criteria independently of any manager surviving.
 2. Update ARCHITECTURE.md + SPEC.md + LTM. Clear swarmtasks. Delete transient screenshots; keep gated evidence.
 3. Next wave: route → plan → council → prompts → spawn.
 
