@@ -78,6 +78,18 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 ---
 
+## Spawn Verification (mandatory ladder — every tmux agent spawn)
+
+**A spawn ends with verification, not hope.** After EVERY pane creation (council, ad-hoc, any CLI agent):
+1. `bin/jarvis-spawn-verify <pane> <agent> 45` — polls for the agent's startup banner; fails on rate-limit/auth/crash patterns or pane death. FAIL = do not proceed to briefing.
+2. PASS → send golden prompt via send-to-peer → expect ACK within 90s (council comms contract).
+3. No ACK → capture the pane and diagnose from CONTENT, not vibes: leaked user input → clear + resend per §6 atomic-pane rule; rate limit → do NOT retry (retries burn quota) — announce and fall back per the gate chain; visible activity → it's turn-gated and processing, WAIT.
+4. One re-brief max. Still silent with zero output = failed spawn.
+5. **Failed-spawn artifact (16d clarification, narrow):** a pane Jarvis created THIS session that never passed spawn verification (no agent banner, ever) is a failed-spawn artifact, not an established agent — the spawner may kill and re-create it, max 2 re-creates, then stop and report to Joshua. Rule 16d's full protection begins the moment verification passes.
+6. `set_pane` registration happens ONLY after verification passes — an unverified pane never enters the relay registry (stale registry entries are exactly how dead agents look reachable).
+
+---
+
 ## Continuous Loop (never idle while managers work)
 
 **ALWAYS 2+ REPOS IN PARALLEL.** Cap + overclock: CLAUDE.md §1 Defaults / HANDOFF. After spawning or gating, IMMEDIATELY start the next repo.
