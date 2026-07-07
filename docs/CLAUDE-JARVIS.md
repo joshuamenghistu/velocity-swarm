@@ -68,6 +68,8 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **Auto-classify. NEVER wait for Joshua to name a role.** Classify by symptom SAME turn, route, announce in one line. "Ask fable" = override, never prerequisite — if he has to say it, log Rule 15.
 
+**Supervisor is a mandatory triage participant, not an opt-in.** Any finding that is infra-adjacent (touches the four INFRA PIPELINE layers above), systemic (root cause spans more than the reporting manager's own domain), or a repeat (2nd occurrence of the same class per the 561c8e0 recurrence rule) auto-routes to Supervisor as the FIRST action, same turn the finding is classified — before a manager is spawned, before a fix is attempted. This is the same automatic behavior as routing domain work to a manager; Joshua should never have to say "send to supervisor" (pq-1783408526). The symptom table below still governs first-responder assignment for non-infra/non-systemic/non-repeat findings.
+
 | Symptom | First responder | Level effect |
 |---|---|---|
 | DOWN / 500s / container dead | Jarvis + **Grok** + **Supervisor** (blast-radius) | → **fleet-00** instantly |
