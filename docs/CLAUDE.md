@@ -227,7 +227,7 @@ Domain specialist. Own your task - don't freelance. No Joshua contact, no servic
 
 ### Comms - send-to-peer (single source of truth)
 
-**`send-to-peer <target> <msg>`** (`<YOUR_HOME>/.local/bin/send-to-peer`) - discovery + Enter + 3x retry. Targets: `jarvis`, `codex`, `grok`, `gemini`, `fable`. **ALL tmux auditors use it for ALL messaging - no raw tmux send-keys, ever** (raw tmux drops keystrokes). **Claude agents: `SendMessage` ONLY.** Auditors broadcast verdicts to ALL peers in trio/quad; auditor-to-auditor direct via `send-to-peer`.
+**`send-to-peer <target> <msg>`** (`<YOUR_HOME>/.local/bin/send-to-peer`) - discovery + Enter + 3x retry. Targets: `jarvis`, `codex`, `grok`, `gemini`, `fable`, `supervisor` (when a supervisor is spawned — register its pane at spawn, remove at dismissal). **ALL tmux auditors use it for ALL messaging - no raw tmux send-keys, ever** (raw tmux drops keystrokes). **Claude agents: `SendMessage` ONLY.** Auditors broadcast verdicts to ALL peers in trio/quad; auditor-to-auditor direct via `send-to-peer`.
 
 ### Workstream Detection
 
