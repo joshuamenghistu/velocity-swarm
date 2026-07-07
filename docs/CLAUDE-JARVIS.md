@@ -90,6 +90,35 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **Kill stale auditor work.** Gate passes / wave resets → Ctrl+C to auditor panes, then the new brief.
 
+---
+
+## Loop Registry
+Every live loop, its primitive, trigger, and exit. A recurring behavior not in this table does not exist — add the row in the same commit that creates the loop.
+
+| Loop | Primitive | Trigger | Exit / Consumer |
+|------|-----------|---------|-----------------|
+| Jarvis continuous loop | TURN | any message/notification | session end via /session-end gate |
+| Nova reply protocol | TURN | (nova)/(windows-claude) msg | POST /respond same turn |
+| Hunt wave | GOAL | /go, /hunt | 7 hunters + Codex clean ×2 rounds |
+| Manager lifecycle | GOAL | spawn | gates pass → /dismiss (refill step mandatory inside /dismiss) |
+| Fleet level de-escalation | GOAL | record_pulse | 2 clean pulses = one step calmer, code-gated |
+| fleet-pulse | TIME | VPS cron, level cadence | writes findings; consumed via wake-cursor |
+| research-pulse | TIME | cron 15min @ fleet-2+ | routes crit/high → tasks; Jarvis consumes routed on wake |
+| CVE scan | TIME | cron daily 06:00 CT | action_required blocks calm-ward moves |
+| Daily CNC drain | TIME | PENDING JOSHUA CRON APPROVAL | pending = refactor-block + gated only |
+| Wind-down on quiet | TIME | /loop self-paced post-stable-completion | Joshua input → stop; increments: cleanup, decay check, standing report |
+| CNC drain (in-session) | EVENT | session start step 8; ≥3 pending or any critical | queue clean or blocked-on-Joshua |
+| Manager refill | EVENT | dismissal (step inside /dismiss) | slots full or no undispatched work |
+| Infra-path guard | EVENT | PreToolUse hook on Edit/Write vs fleet/infra-paths.txt | supervisor approval cited or edit routed |
+| Supervisor commit review | EVENT | commit hash SendMessage'd to supervisor | PASS/CORRECT/STOP returned |
+| 'Check back in N min' | EVENT | Bash run_in_background until-loop; harness re-invokes on exit | condition met |
+| Supervisor CNC awareness | WAKE-CURSOR | every supervisor wake: poll_prompt_queue(consumer=supervisor); push via add_prompt_item hook | cursor advanced |
+| Routed research consumption | WAKE-CURSOR | Jarvis wake: anchor digest shows routed-unactioned count | count zero; stop-blocker enforces |
+
+Rows marked PENDING are designs awaiting build/approval — building one without updating its row = doc-loop violation.
+
+---
+
 **NEXT-3 queue.** Next 3 work items pre-triaged + lease packets drafted in swarmtasks.md. Below 3 = that IS your idle work.
 
 1. **Hunt** — 7 hunters (or current overclock) rolling, respawn each round
