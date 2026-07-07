@@ -250,7 +250,7 @@ Detect session/window/pane dynamically (`tmux display-message -p`) - never hardc
 | Server | Role |
 |--------|------|
 | **chrome-in-chrome** | **Browser - PRIMARY (single source of truth for browser access).** Jarvis, Supervisor, managers - one at a time (next kicks previous off). Codex/Grok/Gemini never (no MCP). |
-| **playwright** | **Browser - FALLBACK.** Jarvis-only, one headless instance. Managers/Supervisor CANNOT use it. |
+| **playwright** | **Browser - FALLBACK.** Jarvis-only, one headless instance. Managers/Supervisor CANNOT use it. **Exception (Joshua 2026-07-07):** Supervisor-spawned sweep subagents may use Playwright FOR SCREENSHOT CAPTURE ONLY (persist to fleet/screenshots/), never for navigation or interaction — Chrome ext remains primary for live verification. |
 | **long-term-memory** | Shared brain |
 | **sequential-thinking** | Multi-step reasoning - use liberally for planning/triage/debugging |
 | **context7** / **duckduckgo** / **fetch** | Library docs / web search / HTTP content |
