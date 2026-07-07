@@ -22,6 +22,8 @@
 
 **Doc-adherence check (step, before repo work).** Cold session or first touch of a repo this session -> run the doc-health rubric (AGE + SYNC + VISION-ALIGNMENT, 0-2 each, `fleet/HANDOFF.md` §Doc-Adherence for scoring detail) via an unnamed agent before any manager/Jarvis edit lands in that repo. Total ≥4 = drifting -> surface it in the same turn (announce + `add_task`) before proceeding, don't silently build on stale docs. Per §5 Shared Systems "new state file = full stack, implied" — doc_health writes to `fleet/state.json`, gets MCP tools + dashboard tile + jarvis-api `/api/doc-health` (Nova reads it, verbalizes staleness) automatically, same commit as the mechanism.
 
+**Team-file hygiene (F1 fix, 2026-07-07 incident).** `bin/tmux-reset` (F1) purges `~/.claude/teams/session-*` on every reset — stale team files from prior sessions caused a named `Agent` spawn to fail this session ("team file not found", "members.map" error). If a named-agent spawn fails with either error OUTSIDE an F1 reset (i.e., the purge hasn't run recently), that's the signal: run `rm -rf ~/.claude/teams/session-*` yourself before retrying the spawn, don't just retry blind.
+
 **HANDOFF/QUEUE LISTS ARE CLAIMS, NOT EVIDENCE.** Bookkeeping lags reality in both directions — done-but-not-deployed (code committed, container stale) and pending-but-already-built (tools live but listed as remaining work); both hit within ten minutes on 2026-07-07. Before speccing, dispatching, or relaying any work list derived from a handoff, queue, or summary: probe live state first — grep the code that allegedly changed, curl the endpoint that allegedly serves it, check whether the tool allegedly unbuilt is already live. One probe per claimed item beats one false spawn per stale marker.
 
 ---
