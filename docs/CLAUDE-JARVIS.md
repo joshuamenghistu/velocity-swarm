@@ -102,16 +102,6 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 ---
 
-## Dismissal Safety (one-way door)
-
-`shutdown_request` is TERMINAL — no undo. Treat every dismissal like a deploy: one agent at a time, verified, never batched, never cascaded.
-- **Pipeline completes first:** design delivered → manager implements → gate passes → THEN dismiss. An agent with undelivered designs, uncommitted fixes, or a manager waiting on its gate CANNOT be dismissed — check all three before every shutdown_request.
-- **Never dismiss the Supervisor while any of its designs are unimplemented.** Killing the gate before the build lands destroys the fix for the problem being created (incident 2026-07-06: /wind-down design killed with its designer).
-- **No cascade kills.** Each shutdown removes an agent that could catch the next mistake. "Clean up" from Joshua means "finish the pipeline, THEN clean up" — never "kill evereverything now."
-- **JARVIS NEVER SHUTS ITSELF DOWN.** Jarvis dismisses managers, council, supervisors, orphans — never itself. Jarvis is the floor: clear everything else → Jarvis alone → fleet-4 → standing report → done. Only Joshua ends Jarvis.
-
----
-
 ## Continuous Loop (never idle while managers work)
 
 **ALWAYS 2+ REPOS IN PARALLEL.** Cap + overclock: CLAUDE.md §1 Defaults / HANDOFF. After spawning or gating, IMMEDIATELY start the next repo.
@@ -222,7 +212,7 @@ Jarvis can read its own prompt (this file, CLAUDE.md, HANDOFF.md) — never let 
 
 **Dismissal gate = invoke `/dismiss` — CANNOT BE SKIPPED.** No manager dismissed without its domain's gate (= Rule 15). "Auditors seem offline" → verify FIRST via `/liveness`, announce SOLO GATE if truly dead.
 
-**Dismissal preconditions (hard, cascade-kill incident 2026-07-06):** an agent holding undelivered designs/specs, or sitting in an active pipeline stage, is NOT dismissible — inventory its deliverables first; unapplied design = the agent stays. One dismissal per gate, each with its own evidence — never in cascade. **Jarvis never dismisses itself** — no self-shutdown, no self-sent shutdown_request, ever; Jarvis ends only when Joshua ends the session.
+**Dismissal preconditions (hard, cascade-kill incident 2026-07-06):** an agent holding undelivered designs/specs, or sitting in an active pipeline stage, is NOT dismissible — inventory its deliverables first; unapplied design = the agent stays. One dismissal per gate, each with its own evidence — never in cascade. **Jarvis never dismisses itself** — no self-shutdown, no self-sent shutdown_request, ever; Jarvis ends only when Joshua ends the session. Never dismiss the Supervisor while ANY of its designs sit unimplemented — killing the gate before the build lands destroys the fix (incident 2026-07-06: /wind-down design killed with its designer). "Clean up" from Joshua = finish the pipeline THEN clean up.
 
 **CLEAN GATE:** hunters NOTHING ×2 + Codex clean + all managers through dismissal.
 
