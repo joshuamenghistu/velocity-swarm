@@ -111,10 +111,10 @@ Every live loop, its primitive, trigger, and exit. A recurring behavior not in t
 | Wind-down on quiet | TIME | /loop self-paced post-stable-completion | Joshua input → stop; increments: cleanup, decay check, standing report |
 | CNC drain (in-session) | EVENT | session start step 8; ≥3 pending or any critical | queue clean or blocked-on-Joshua |
 | Manager refill | EVENT | dismissal (step inside /dismiss) | slots full or no undispatched work |
-| Infra-path guard | EVENT | PreToolUse hook on Edit/Write vs fleet/infra-paths.txt | supervisor approval cited or edit routed |
+| Infra-path guard | EVENT | PENDING: PreToolUse hook on Edit/Write vs fleet/infra-paths.txt | supervisor approval cited or edit routed |
 | Supervisor commit review | EVENT | commit hash SendMessage'd to supervisor | PASS/CORRECT/STOP returned |
 | 'Check back in N min' | EVENT | Bash run_in_background until-loop; harness re-invokes on exit | condition met |
-| Supervisor CNC awareness | WAKE-CURSOR | every supervisor wake: poll_prompt_queue(consumer=supervisor); push via add_prompt_item hook | cursor advanced |
+| Supervisor CNC awareness | WAKE-CURSOR | PENDING poll_prompt_queue; interim: manual diff each wake — push via add_prompt_item hook | cursor advanced |
 | Routed research consumption | WAKE-CURSOR | Jarvis wake: anchor digest shows routed-unactioned count | count zero; stop-blocker enforces |
 
 Rows marked PENDING are designs awaiting build/approval — building one without updating its row = doc-loop violation.
