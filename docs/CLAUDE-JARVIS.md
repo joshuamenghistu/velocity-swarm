@@ -150,7 +150,7 @@ Every live loop, its primitive, trigger, and exit. A recurring behavior not in t
 |------|-----------|---------|-----------------|
 | Jarvis continuous loop | TURN | any message/notification | session end via /session-end gate |
 | Nova reply protocol | TURN | (nova)/(windows-claude) msg | POST /respond same turn |
-| Hunt wave | GOAL | /go, /hunt | 7 hunters + Codex clean ×2 rounds |
+| Hunt wave | GOAL | /go, /hunt | 7 hunters + Codex clean ×2 rounds; persists across wave-reset boundaries per Wave Reset's carve-out (re-armed as the SAME hunt until its own exit criteria met, not reset by wave boundaries) |
 | Manager lifecycle | GOAL | spawn | gates pass → /dismiss (refill step mandatory inside /dismiss) |
 | Fleet level de-escalation | GOAL | record_pulse | 2 clean pulses = one step calmer, code-gated |
 | fleet-pulse | TIME | VPS cron, level cadence | writes findings; consumed via wake-cursor |
