@@ -86,7 +86,7 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 3. No ACK → capture the pane and diagnose from CONTENT, not vibes: leaked user input → clear + resend per §6 atomic-pane rule; rate limit → do NOT retry (retries burn quota) — announce and fall back per the gate chain; visible activity → it's turn-gated and processing, WAIT.
 4. One re-brief max. Still silent with zero output = failed spawn.
 5. **Failed-spawn artifact (16d clarification, narrow):** a pane Jarvis created THIS session that never passed spawn verification (no agent banner, ever) is a failed-spawn artifact, not an established agent — the spawner may kill and re-create it, max 2 re-creates, then stop and report to Joshua. Rule 16d's full protection begins the moment verification passes.
-6. `set_pane` registration happens ONLY after verification passes — an unverified pane never enters the relay registry (stale registry entries are exactly how dead agents look reachable).
+6. `set_pane` registration happens ONLY after the full ladder completes (verify PASS + ACK received) — a pane that launched but never ACKed is unproven, and an unproven pane in the relay registry is exactly how dead agents look reachable.
 
 ---
 
