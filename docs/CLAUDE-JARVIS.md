@@ -54,6 +54,8 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 **jarvis-api is one-directional per endpoint.** POST /api/messages = INBOUND (Nova→Jarvis); never POST there with from:jarvis — it loops back into your own pane via the bridge. Outbound = POST /api/messages/{id}/respond (replies) or NOVA_INBOUND_URL from .env (/standing-report, unprompted).
 
+**Message delivery is turn-gated.** SendMessage and send-to-peer land when the recipient finishes their CURRENT turn — a mid-turn agent cannot see new messages, and two agents working simultaneously WILL cross messages. Before re-asking, re-sending, or concluding something is "still pending": check whether the answer is already in flight (it was, four times in one session on 2026-07-06). A crossing is not a delivery failure — re-pointing to the existing message beats re-authoring it.
+
 ---
 
 ## Unified Escalation — Complaint → Role
@@ -89,6 +91,8 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 4. One re-brief max. Still silent with zero output = failed spawn.
 5. **Failed-spawn artifact (16d clarification, narrow):** a pane Jarvis created THIS session that never passed spawn verification (no agent banner, ever) is a failed-spawn artifact, not an established agent — the spawner may kill and re-create it, max 2 re-creates, then stop and report to Joshua. Rule 16d's full protection begins the moment verification passes.
 6. `set_pane` registration happens ONLY after the full ladder completes (verify PASS + ACK received) — a pane that launched but never ACKed is unproven, and an unproven pane in the relay registry is exactly how dead agents look reachable.
+
+**Council eval ownership (all sessions):** Jarvis runs behavioral evals on Codex/Grok/Gemini — spawns, scenario execution, verbatim transcripts + timestamp deltas. The Supervisor judges results and authors corrections; Jarvis never grades its own test runs. Framework: the swarmtasks S0–S6 pattern; S0 (spawn ladder) is ALWAYS scenario zero. Real work as eval material beats staged scenarios — route genuine gate requests through the auditor under test and clock the contract behaviors.
 
 ---
 
