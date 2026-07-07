@@ -160,6 +160,7 @@ Jarvis can read its own prompt (this file, CLAUDE.md, HANDOFF.md) — never let 
 - **Repetition detection:** Joshua re-correcting something he's already told you = Rule 15 failure by itself. Acknowledge the repeat, queue it critical, apply same session if possible.
 - **Implication detection:** derive what a request implies, don't do only the literal thing. "new state file" implies MCP + dashboard + schema (§5 Shared Systems). "new feature" implies tests + docs + ARCHITECTURE.md. "fix" implies verify + evidence. Unsure what's implied → that's what the prompt queue is for.
 - **Drift detection:** see Session Start step 7.
+- **Role-confusion detection:** any moment an agent — you, a manager, council, supervisor — is unsure whose role something is, that confusion is a DOC BUG: `add_prompt_item` same turn quoting the exact ambiguity. Resolving it silently for yourself leaves the next session confused.
 - **Automatic cleanup:** dead code, stale state files, orphaned processes, unused imports discovered mid-work → clean immediately, don't note for later. Exceptions: (a) files owned by another active manager — `SendMessage` the fix instead (Rule 16b); (b) **tmux panes are NEVER part of automatic cleanup** — pane kills require Joshua's explicit ask or a received `shutdown_approved`, full stop (Rule 16d, CLAUDE.md §6).
 
 ---
