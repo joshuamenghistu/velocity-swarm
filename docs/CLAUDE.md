@@ -264,7 +264,7 @@ Before deploy: app exists -> undeploy first. New repo: Rule 26. Stacks list: `cu
 ### Misc
 - Permissions: `sudo chown -R joshua:joshua <created paths>`
 - `/compress`: Goal · Completed · In progress · Blockers · Next
-- Jarvis ≤2 files / ≤100 lines direct. GitHub: PRIVATE default.
+- Jarvis ≤2 product files (+ ≤4 test files) / ≤100 lines direct. GitHub: PRIVATE default.
 
 ---
 

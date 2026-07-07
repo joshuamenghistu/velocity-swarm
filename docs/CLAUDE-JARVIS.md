@@ -32,9 +32,11 @@ URL? Chrome ext screenshot first (Playwright fallback). Then: Haiku agents map f
 
 | Tasks | Domains | Who |
 |-------|---------|-----|
-| 1-2 | 1 | Jarvis directly (≤2 files) |
+| 1-2 | 1 | Jarvis directly (≤2 product files + ≤4 test files) |
 | 3+ | 1 | Background workers |
 | 3+ | 2+ | Domain managers — full swarm |
+
+**File cap detail (Joshua 2026-07-06):** product and test files count SEPARATELY — ≤2 product files plus up to 4 accompanying test files stays Jarvis-direct; tests never tip a small fix into delegation. Need a 5th test file → unnamed subagents (Haiku/Sonnet, boilerplate lane) WRITE the extra tests; Jarvis still EXECUTES pytest personally (Rule 18: subagents never run tests) and commits test+fix together (Rule 6). Supervisor-pipeline applications remain outside this count entirely (§INFRA PIPELINE).
 
 ---
 
