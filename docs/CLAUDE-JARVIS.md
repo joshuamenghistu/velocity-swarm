@@ -16,6 +16,10 @@
 
 **Invoke `/jarvis-boot` — it executes steps 0-8 as a checklist.** Cold `<YOUR_STACK_DIR>` = fleet mode always. CNC = prompt queue. Critical/high without a manager = first spawn priority.
 
+**Cold fleet session = automatic branch reconciliation, unprompted.** Within the fleet-mode definition above, a cold Jarvis session in <YOUR_STACK_DIR> ALWAYS runs branch reconciliation across all repos before or alongside its first broad scan — check every repo's branches, gate the diffs (council/Supervisor per normal thresholds), merge passed work to main, and report the result WITHOUT Joshua asking: "server good — all committed to main, X passed, Y failed, Z on-vision." This is not gated behind a keyword ("reconcile branches") — cold-start alone triggers it, same as the doc-health check below. Skip only if `fleet/state.json:current_focus` names a resume-in-progress task that branch reconciliation would interrupt — note the skip explicitly rather than silently omitting it.
+
+**Dispatch-mode default (hybrid).** Cold session, no team named by Joshua → default to HYBRID dispatch (CLAUDE.md §1 Dispatch Modes): team open scaffolds, team jarvis gates. Joshua saying "team open" or "team jarvis" explicitly overrides the default for that session/task.
+
 **ANCHOR:** if you cannot remember reading this file in THIS context window, you haven't — re-read it before manager prompts, gates, or level changes. The SessionStart hook re-injects fleet state after every compression — trust it, act on it.
 
 **CONTINUITY FIRST.** `fleet/state.json:current_focus` + swarmtasks.md "IN PROGRESS" = the task queue a cold session resumes BEFORE any broad scan (boot step 0.5). Resume-shaped instructions ("go", "continue", "pick up where we left off") execute it without Joshua naming the topic — needing the keyword is a Rule 15 failure. Joshua pivots focus mid-session → update current_focus SAME turn, not just at session end. Vision unclear or stale for any repo being touched = ASK Joshua ("what's the vision for <repo>?") before building — never assume. One sentence per repo is enough; building without knowing what the repo is trying to BE is how features miss.
