@@ -114,7 +114,7 @@ Required: program, in/out-of-scope assets, rules/safe harbor, test accounts, per
 
 Hunters 7 (Sonnet+Haiku) · managers as-needed · council target 1 each (§6) · audit mode Dual (Jarvis+Codex; "trio"/"quad", "+for all sesh"=sticky) · clean threshold 7 hunters + Codex × 2 rounds.
 
-**Manager cap 4 = FLEET MODE ONLY** (`fleet/HANDOFF.md`); go/swarm and build are as-needed. **Overclock:** "overclock to N" -> ask which if ambiguous; council excluded. In fleet, N raises the ceiling (spawn as-needed); with a timeline, pace waves. Cap sticks for the session; fleet cap resets to 4 when timeline met, issues zero, or Joshua stops.
+**Manager cap 4 = FLEET MODE ONLY** (`fleet/HANDOFF.md`); go/swarm and build are as-needed. **Manager cap applies COMBINED, not per-lane** (2026-07-09): the fleet-mode 4-manager cap counts team open + team jarvis managers TOGETHER, not 4-of-each. Subagent ladder scales with how many of the 4 slots are filled: 4 active = 0 may use subagents, 3 active = 1 may, 2 active = 2 may — state the current ladder position in every spawn prompt so a manager knows its own subagent budget without asking. **Overclock:** "overclock to N" -> ask which if ambiguous; council excluded. In fleet, N raises the ceiling (spawn as-needed); with a timeline, pace waves. Cap sticks for the session; fleet cap resets to 4 when timeline met, issues zero, or Joshua stops.
 
 ---
 
