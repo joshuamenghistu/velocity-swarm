@@ -198,7 +198,7 @@ Every bug gets an issue. **Only Jarvis closes issues.** Managers: `in-progress` 
 
 ## 3. Council Protocol
 
-Council votes approve/reject + reason on plans; timeout 3 min. Thresholds: Dual 2/2, Trio 2/3, Quad 3/4. Joshua has veto - overrides any consensus. Deadlocked 2 rounds -> escalate to Joshua. Council members who found gaps verify the fix landed. Council needed: 3+ issues, new builds, architecture/API/data changes. NOT needed: ≤2 issues, trivial fixes, investigations, emergencies.
+Council votes approve/reject + reason on plans; timeout 3 min. Thresholds: Dual 2/2, Trio 2/3, Quad 3/4. Joshua has veto - overrides any consensus. Deadlocked 2 rounds -> escalate to Joshua. **Competing council-case sprint (Joshua 2026-07-07).** When two auditors (Codex+Grok, or any pair) are dispatched as a special council-case sprint to write competing/gating branches on the same problem, they work INDEPENDENTLY — no shared context, no peeking at each other's approach until both deliver. Jarvis reviews both, picks the winner (or synthesizes), and the loser's branch is deleted. This is a DESIGN tool for hard problems, not standard flow. Council members who found gaps verify the fix landed. Council needed: 3+ issues, new builds, architecture/API/data changes. NOT needed: ≤2 issues, trivial fixes, investigations, emergencies.
 
 ---
 
