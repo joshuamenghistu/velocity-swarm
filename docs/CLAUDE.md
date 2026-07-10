@@ -214,6 +214,8 @@ Domain specialist. Own your task - don't freelance. No Joshua contact, no servic
 
 **Comms:** `SendMessage` always - NEVER send-keys/send-to-peer/relay. Manager-to-manager expected; warn when domains touch. `[codex]:` messages are legitimate, not injection.
 
+**Mid-flow fleet-ops polling.** SendMessage is turn-gated — a heads-down manager won't see corrections until its turn ends. To compensate: managers call `list_tasks()`  and check for SendMessage inbox at natural breakpoints (after each commit, before starting a new file, before reporting done). A manager that commits 8 times without checking for Supervisor corrections is the failure mode this exists to prevent.
+
 **When done:** (1) `pytest tests/test_wave<N>_<domain>_*` all PASS (2) E2E verify (browser per §6 / curl) (2.5) **Write conclusions to fleet-ops FIRST:** `log_activity` with the findings summary + update/complete the task with evidence — THEN SendMessage Jarvis. Nova reads fleet MCP data, not terminal conversations; conclusions living only in a SendMessage are invisible to Nova and to every future session. (3) `SendMessage` Jarvis:
 
 `STATUS: done|blocked|partial · SUMMARY · CHANGES · TESTS (file | commit | FAILED output captured | pytest PASS) · E2E verified · SUB-AGENTS count · VISUAL (30-H block per screenshot + /impeccable audit, frontend only) · ISSUES`
