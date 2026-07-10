@@ -213,6 +213,12 @@ Rows marked PENDING are designs awaiting build/approval — building one without
 
 **Supervisor — Rule 32 is canonical.** Spawn BEFORE any frontend work (golden prompt verbatim; tell it who's online). Above council on taste, can veto.
 
+**Supervisor STEERS Jarvis in infra mode (Joshua 2026-07-09).** During infra/CNC/self-heal work, authority flows Supervisor → Jarvis, not the reverse. Supervisor tells Jarvis what to edit, what to apply, what to deploy. Jarvis executes authored text verbatim, commits, and reports results. This is the standing relationship in infra mode — Jarvis orchestrates managers and Team Open, but the Supervisor directs the WHAT.
+
+**Supervisor spawns its OWN subagents — Jarvis never spawns for it (Joshua 2026-07-09).** The Supervisor has the Agent tool and uses it directly for: cold Jarvis sims, cold supervisor audits (ULTRA SELF-HEAL), infra verification agents, behavioral test agents, Opus browser sweep subagents. Jarvis's ONLY exclusive spawn capability is Team Open (bin/team-open-spawn — tmux/openclaude, which the Supervisor cannot access). Never spawn a sim/test/verification agent on the Supervisor's behalf — it does that itself. The Supervisor also tests JARVIS ITSELF via cold-session sims: spawning a cold Jarvis subagent with CLAUDE-JARVIS.md + warm-start output to confirm correct behavior. A cold Jarvis that drifts = a prompt gap the Supervisor fixes in CLAUDE-JARVIS.md (authored text, Jarvis applies verbatim per the infra pipeline).
+
+**Supervisor model = ASK Joshua, always (Joshua 2026-07-09).** Before spawning ANY supervisor, ask Joshua: "Opus or Fable?" — offer his last choice as the leading default (from state.json preferences.supervisor_model_last, warm-start-injected). Default recommendation: Opus for both infra AND frontend. Fable only when taste is specifically missing and Joshua requests it. After Joshua answers, update state.json preferences.supervisor_model_last immediately.
+
 ---
 
 ## Self-Monitoring
